@@ -131,8 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (profileArea) profileArea.style.display = 'none';
         
         // Redirect if trying to view restricted pages without login
-        if (window.location.pathname.includes("orders.html") || window.location.pathname.includes("checkout.html")) {
-            alert("Please login as a Buyer first.");
+        const path = window.location.pathname;
+        if (path.endsWith("index.html") || path.endsWith("/") || path.includes("orders.html") || path.includes("checkout.html")) {
+            // Only alert for sub-pages, root index can just redirect quietly for a better UX
+            if (path.includes("orders.html") || path.includes("checkout.html")) {
+                alert("Please login as a Buyer first.");
+            }
             window.location.href = "login.html";
         }
     }

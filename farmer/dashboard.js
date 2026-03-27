@@ -41,6 +41,28 @@ window.openEditModal = (id, name, qty, price) => {
     }
 };
 
+// Helper to get relevant Unsplash images based on crop name
+function getCropImage(name) {
+    const crop = (name || "").toLowerCase();
+    const images = {
+        mango: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=400",
+        potato: "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&q=80&w=400",
+        tomato: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400",
+        chilli: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&q=80&w=400",
+        onion: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=400",
+        wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400",
+        rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400",
+        banana: "https://images.unsplash.com/photo-1571771894821-ad9b58a33646?auto=format&fit=crop&q=80&w=400",
+        apple: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=400"
+    };
+
+    for (let key in images) {
+        if (crop.includes(key)) return images[key];
+    }
+    // Fallback to a general organic farm image
+    return "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=400";
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Session & UI Setup
     const farmerId = localStorage.getItem('farmerId');
@@ -61,12 +83,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         addProduceForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = addProduceForm.querySelector('button');
+            const cropName = document.getElementById('prodName').value;
+            
             submitBtn.disabled = true;
             submitBtn.textContent = "Saving...";
 
             try {
                 await addDoc(collection(db, "products"), {
-                    name: document.getElementById('prodName').value,
+                    name: cropName,
                     qty: document.getElementById('prodQty').value,
                     unit: document.getElementById('prodUnit').value,
                     category: document.getElementById('prodCategory')?.value || "vegetables",
@@ -74,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     farmerId,
                     farmerName: farmName,
                     location: farmerLoc,
-                    imageUrl: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400",
+                    imageUrl: getCropImage(cropName),
                     isOrganic: true,
                     createdAt: serverTimestamp()
                 });
@@ -115,7 +139,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert("Error updating crop details.");
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = "Save Changes";
+                submitBtn.textContent = "Confirm";
             }
         });
     }

@@ -8,6 +8,7 @@ import {
     where,
     updateDoc,
     doc,
+    getDoc,
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -159,9 +160,29 @@ window.processPayment = async () => {
     const selectedMethod = document.querySelector('input[name="pay-method"]:checked').value;
 
     try {
-        // Group items by farmer so farmers get their own distinct orders
-        const ordersByFarmer = {};
+        // --- 1. CRITICAL STOCK VALIDATION ---
+        for (const item of realCartItems) {
+            const productRef = doc(db, "products", item.productId);
+            const productSnap = await getDoc(productRef);
+            
+            if (!productSnap.exists()) {
+                alert(`Error: Product "${item.productName}" no longer exists in our marketplace.`);
+                payBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Pay Securely Now';
+                payBtn.disabled = false;
+                return;
+            }
 
+            const currentStock = Number(productSnap.data().qty);
+            if (item.qty > currentStock) {
+                alert(`Stock Unavailable: Only ${currentStock} units of "${item.productName}" remain. Please adjust your cart quantity.`);
+                payBtn.innerHTML = '<i class="fa-solid fa-lock"></i> Pay Securely Now';
+                payBtn.disabled = false;
+                return;
+            }
+        }
+
+        // --- 2. PREPARE ORDERS ---
+        const ordersByFarmer = {};
         realCartItems.forEach(item => {
             if (!ordersByFarmer[item.farmerId]) {
                 ordersByFarmer[item.farmerId] = {
@@ -175,11 +196,13 @@ window.processPayment = async () => {
             ordersByFarmer[item.farmerId].subtotal += (item.qty * item.price);
         });
 
-        // Calculate proportions (Delivery split, GST 5% proportional)
         const farmerCount = Object.keys(ordersByFarmer).length;
         const deliveryPerFarmer = deliveryFee / farmerCount;
 
         const orderPromises = [];
+        const stockUpdatePromises = [];
+
+        // --- 3. EXECUTE ORDERS & STOCK DECREMENT ---
         for (const fId in ordersByFarmer) {
             const fData = ordersByFarmer[fId];
             const gst = fData.subtotal * 0.05;
@@ -188,11 +211,11 @@ window.processPayment = async () => {
             const orderData = {
                 buyerId: buyerId,
                 buyerName: buyerName || "Wholesale Buyer",
-                farmerId: fData.farmerId, // Exact route mapping for the Farmer Dashboard
+                farmerId: fData.farmerId,
                 farmerName: fData.farmerName,
                 productName: fData.items.join(", "),
                 totalAmount: Number(finalFarmerAmount.toFixed(2)),
-                status: "paid", // The mock payment was successful
+                status: "paid",
                 paymentMethod: selectedMethod,
                 deliveryMethod: deliveryFee === 0 ? "Self Pickup" : "Home Delivery",
                 createdAt: serverTimestamp()
@@ -201,8 +224,18 @@ window.processPayment = async () => {
             orderPromises.push(addDoc(collection(db, "buyer_orders"), orderData));
         }
 
-        // Wait for all individual farmer orders to submit
-        await Promise.all(orderPromises);
+        // Prepare stock subtractions for EVERY item purchased
+        for (const item of realCartItems) {
+            const productRef = doc(db, "products", item.productId);
+            const productSnap = await getDoc(productRef);
+            const currentStock = Number(productSnap.data().qty);
+            stockUpdatePromises.push(updateDoc(productRef, {
+                qty: Math.max(0, currentStock - item.qty)
+            }));
+        }
+
+        // Finalize database updates
+        await Promise.all([...orderPromises, ...stockUpdatePromises]);
         
         // Clear all items from the cart in the database now that they are ordered
         const deletePromises = realCartItems.map(item => deleteDoc(doc(db, "buyer_cart", item.id)));

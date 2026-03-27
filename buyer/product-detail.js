@@ -34,9 +34,33 @@ async function loadProductDetails() {
     }
 }
 
+// Helper for dynamic images if the farmer didn't specify a unique one
+function getCropImage(name, currentUrl) {
+    const tomatoUrl = "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400";
+    if (currentUrl && currentUrl !== tomatoUrl) return currentUrl;
+
+    const crop = (name || "").toLowerCase();
+    const images = {
+        mango: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=400",
+        potato: "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&q=80&w=400",
+        tomato: tomatoUrl,
+        chilli: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&q=80&w=400",
+        onion: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=400",
+        wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400",
+        rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400",
+        banana: "https://images.unsplash.com/photo-1571771894821-ad9b58a33646?auto=format&fit=crop&q=80&w=400",
+        apple: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=400"
+    };
+
+    for (let key in images) {
+        if (crop.includes(key)) return images[key];
+    }
+    return currentUrl || "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=400";
+}
+
 function updateUI(p) {
     const mainImg = document.querySelector('.main-image');
-    if (mainImg) mainImg.src = p.imageUrl || mainImg.src;
+    if (mainImg) mainImg.src = getCropImage(p.name, p.imageUrl);
 
     document.querySelector('.product-title').innerText = p.name;
     document.querySelector('.product-category').innerText = `${p.category || 'Fresh Harvest'} • Fresh Harvest`;

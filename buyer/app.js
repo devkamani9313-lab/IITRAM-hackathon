@@ -11,9 +11,25 @@ import {
     onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// -- 1. Firestore Session Check (Replacement for Firebase Auth) --
+// -- 1. Global Session & Logout Handlers --
 const buyerId = localStorage.getItem('buyerId');
 const buyerName = localStorage.getItem('buyerName');
+
+window.logoutBuyer = () => {
+    if (confirm("Log out of FarmConnect?")) {
+        localStorage.removeItem('buyerId');
+        localStorage.removeItem('buyerName');
+        window.location.href = "login.html";
+    }
+};
+
+// Global listener for the logout button (fixes the marketplace logout issue)
+document.addEventListener('click', (e) => {
+    if (e.target.id === 'logout-btn' || e.target.closest('#logout-btn')) {
+        e.preventDefault();
+        window.logoutBuyer();
+    }
+});
 
 let allProducts = [];
 
@@ -86,26 +102,28 @@ function applyCurrentFilters() {
 // Helper for dynamic images if the farmer didn't specify a unique one
 function getCropImage(name, currentUrl) {
     const tomatoUrl = "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400";
-    // If we already have a specialized URL (not the default tomato), use it
-    if (currentUrl && currentUrl !== tomatoUrl) return currentUrl;
+    const potatoUrl = "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&q=80&w=400";
+    
+    // Robustness Check: If we have NO url or it's the old generic tomato, heal it.
+    if (!currentUrl || currentUrl === tomatoUrl || currentUrl === "" || currentUrl === "undefined") {
+        const crop = (name || "").toLowerCase();
+        const images = {
+            mango: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=400",
+            potato: potatoUrl,
+            tomato: tomatoUrl,
+            chilli: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&q=80&w=400",
+            onion: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=400",
+            wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d0200?auto=format&fit=crop&q=80&w=400",
+            rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400"
+        };
 
-    const crop = (name || "").toLowerCase();
-    const images = {
-        mango: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=400",
-        potato: "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&q=80&w=400",
-        tomato: tomatoUrl,
-        chilli: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&q=80&w=400",
-        onion: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=400",
-        wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400",
-        rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400",
-        banana: "https://images.unsplash.com/photo-1571771894821-ad9b58a33646?auto=format&fit=crop&q=80&w=400",
-        apple: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=400"
-    };
-
-    for (let key in images) {
-        if (crop.includes(key)) return images[key];
+        for (let key in images) {
+            if (crop.includes(key)) return images[key];
+        }
+        return "https://placehold.co/400x300/eafaf1/2fb362?text=Image+Not+Available";
     }
-    return currentUrl || "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=400";
+
+    return currentUrl;
 }
 
 function renderProducts(products) {
@@ -118,20 +136,25 @@ function renderProducts(products) {
     
     productGrid.innerHTML = "";
 
+    const noImagePlaceholder = "https://placehold.co/400x300/eafaf1/2fb362?text=Image+Not+Available";
+
     products.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
         
         const safeName = p.name || 'Produce';
         const safeFarmer = p.farmerName || 'Farmer';
-        const safeImg = getCropImage(safeName, p.imageUrl);
+        const rawImg = getCropImage(safeName, p.imageUrl);
         const safeLocation = p.location || 'Maharashtra';
         const safeUnit = p.unit || 'kg';
         const safePrice = Number(p.price) || 0;
         
         card.innerHTML = `
             <div class="product-image-wrapper">
-                <img src="${safeImg}" alt="${safeName.replace(/"/g, '&quot;')}" class="product-image">
+                <img src="${rawImg}" 
+                     alt="${safeName.replace(/"/g, '&quot;')}" 
+                     class="product-image"
+                     onerror="this.src='${noImagePlaceholder}'">
                 ${p.isOrganic ? '<span class="badge">Organic</span>' : ''}
             </div>
             <div class="product-info" style="padding: 1.5rem;">
@@ -164,7 +187,7 @@ function renderProducts(products) {
         const btnAdd = card.querySelector('.btn-add');
         btnAdd.addEventListener('click', (e) => {
             e.stopPropagation();
-            window.addToCart(p.id, safeName, p.farmerId, safeFarmer, safePrice, safeImg, safeUnit);
+            window.addToCart(p.id, safeName, p.farmerId, safeFarmer, safePrice, rawImg, safeUnit);
         });
 
         productGrid.appendChild(card);

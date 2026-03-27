@@ -1,0 +1,138 @@
+/* Shared Payment Page Styles */
+
+.payment-container {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.payment-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: var(--text-dark);
+}
+
+.payment-options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.method-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 2px solid #f1f5f9;
+    border-radius: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.method-card:hover {
+    border-color: var(--primary-color);
+    background: #f0f7ff;
+    transform: translateY(-2px);
+}
+
+.method-card i {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    width: 40px;
+}
+
+.method-info h4 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.method-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* Specific Forms */
+.payment-form {
+    margin-top: 30px;
+    text-align: left;
+}
+
+.payment-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.payment-form input, .payment-form select {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.btn-pay-now {
+    width: 100%;
+    padding: 18px;
+    border-radius: 14px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(43, 108, 176, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-pay-now:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(43, 108, 176, 0.4);
+}
+
+/* Result Screen */
+.result-icon {
+    font-size: 5rem;
+    color: var(--accent-green);
+    margin-bottom: 20px;
+    animation: scaleUp 0.5s ease;
+}
+
+@keyframes scaleUp {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.bank-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.bank-item {
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.bank-item.active {
+    border-color: var(--primary-color);
+    background: #f0f7ff;
+    color: var(--primary-color);
+}

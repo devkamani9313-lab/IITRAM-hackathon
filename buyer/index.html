@@ -3,86 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FarmConnect - Buyer Marketplace</title>
+    <title>Marketplace | FarmConnect Buyer</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Global Styles -->
     <link rel="stylesheet" href="../assets/global.css">
+    <!-- Specific Buyer Styles -->
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body class="dashboard-body">
 
-    <!-- Navbar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="nav-logo">🏬 Buyer Console</a>
-            <div class="nav-links">
-                <a href="index.html" class="active">Marketplace</a>
-                <a href="orders.html">My Orders</a>
-                <button id="logout-btn" class="nav-logout">Logout</button>
-            </div>
-        </div>
-    </nav>
+            <a href="../index.html" class="logo">
+                <i class="fa-solid fa-seedling"></i>
+                Farm<span>Connect</span>
+            </a>
 
-    <!-- Marketplace Header -->
-    <header class="marketplace-header">
-        <div class="header-content">
-            <h1>Fresh From The Farm</h1>
-            <p>Direct wholesale sourcing for your business.</p>
-        </div>
-        <div class="search-bar">
-            <input type="text" id="product-search" placeholder="Search for produce (e.g. Tomatoes, Rice)...">
-            <select id="category-filter">
+            <div class="search-container">
+                <input type="text" id="product-search" placeholder="Search for fresh crops, farmers, or locations...">
+                <button class="search-btn">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </div>
+
+            <select id="category-filter" class="nav-category-select">
                 <option value="all">All Categories</option>
                 <option value="vegetables">Vegetables</option>
                 <option value="fruits">Fruits</option>
                 <option value="grains">Grains</option>
             </select>
-        </div>
-    </header>
 
-    <!-- Product Grid -->
-    <main class="product-grid-container">
-        <div id="product-grid" class="product-grid">
-            <!-- Sample Product Cards -->
-            <div class="product-card">
-                <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1518977676601-b53f02bad67b?auto=format&fit=crop&q=80')">
-                    <span class="category-badge">Vegetables</span>
+            <div class="nav-actions">
+                <div class="nav-links">
+                    <a href="index.html" class="active">Marketplace</a>
+                    <a href="orders.html">My Orders</a>
                 </div>
-                <div class="product-info">
-                    <h3>Organic Tomatoes</h3>
-                    <p class="farmer-location">📍 Nasik, Maharashtra</p>
-                    <div class="price-unit">₹40 <span>/ kg</span></div>
-                    <p class="min-order">Min Order: 50kg</p>
-                    <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('tomatoes-01')">Negotiate Price</button>
-                </div>
-            </div>
 
-            <div class="product-card">
-                <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80')">
-                    <span class="category-badge">Grains</span>
+                <div class="cart-icon" onclick="window.location.href='checkout.html'">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cart-badge">3</span>
                 </div>
-                <div class="product-info">
-                    <h3>Basmati Rice</h3>
-                    <p class="farmer-location">📍 Karnal, Haryana</p>
-                    <div class="price-unit">₹85 <span>/ kg</span></div>
-                    <p class="min-order">Min Order: 100kg</p>
-                    <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('rice-01')">Negotiate Price</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&q=80')">
-                    <span class="category-badge">Fruits</span>
-                </div>
-                <div class="product-info">
-                    <h3>Fresh Oranges</h3>
-                    <p class="farmer-location">📍 Nagpur, Maharashtra</p>
-                    <div class="price-unit">₹60 <span>/ kg</span></div>
-                    <p class="min-order">Min Order: 20kg</p>
-                    <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('oranges-01')">Negotiate Price</button>
+                
+                <div id="auth-container" class="auth-section">
+                    <!-- Login Button (Hidden if logged in) -->
+                    <button id="login-nav-btn" class="btn" style="padding: 8px 20px; border-radius: 8px; font-weight: 600; background: var(--primary-color); color: white; border: none; cursor: pointer; display: none;" onclick="window.location.href='login.html'">
+                        Login / Sign Up
+                    </button>
+                    
+                    <!-- Profile Area (Hidden if logged out) -->
+                    <div id="profile-area" class="profile-dropdown" style="display: none;">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Profile" class="profile-img">
+                        <button id="logout-btn" class="nav-logout">Logout</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
+    </nav>
 
+    <div class="main-container">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h3 class="filter-title">Categories</h3>
+                <div class="filter-group">
+                    <label class="filter-item">
+                        <input type="checkbox" checked> Vegetables
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox"> Fruits
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox" checked> Grains & Cereals
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox"> Dairy Products
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox"> Organic Speciality
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">Price Range (per kg)</h3>
+                <input type="range" min="10" max="500" value="250" class="price-range">
+                <div style="display:flex; justify-content:space-between; font-size: 0.85rem; color: var(--text-light);">
+                    <span>₹10</span>
+                    <span>₹500</span>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">Location</h3>
+                <div class="filter-group">
+                    <label class="filter-item">
+                        <input type="checkbox" checked> Within 50km
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox"> Specific State
+                    </label>
+                    <div style="padding-left: 25px; margin-top: 5px;">
+                        <input type="text" placeholder="Enter City/State" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.85rem;">
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header class="marketplace-header" style="text-align: left; padding: 0 0 2rem 0; border: none;">
+                <div class="header-content">
+                    <h1 style="font-size: 2.2rem; font-weight: 800;">Fresh From The Farm</h1>
+                    <p style="color: var(--text-light); font-size: 1.1rem;">Direct wholesale sourcing for your business.</p>
+                </div>
+            </header>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700;">Available Produce</h2>
+                <div id="results-count" style="font-size: 0.9rem; color: var(--text-light);">
+                    Fetching live updates...
+                </div>
+            </div>
+
+            <!-- This grid will be populated by app.js -->
+            <div id="product-grid" class="products-grid">
+                <!-- Loading State -->
+                <div class="loading-spinner" style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
+                    <p style="margin-top: 15px; color: var(--text-light);">Loading fresh products...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase & App Logic -->
     <script type="module" src="app.js"></script>
 </body>
 </html>

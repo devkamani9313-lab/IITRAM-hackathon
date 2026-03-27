@@ -70,15 +70,41 @@ if (loginForm) {
     });
 }
 
+// Initialize Logout Buttons across all pages
+document.addEventListener('DOMContentLoaded', () => {
+    const logoutBtns = document.querySelectorAll('#logout-btn, .nav-logout');
+    logoutBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = "login.html";
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
+        });
+    });
+});
+
 // Check auth state
 onAuthStateChanged(auth, (user) => {
+    const loginNavBtn = document.getElementById('login-nav-btn');
+    const profileArea = document.getElementById('profile-area');
+    const authContainer = document.getElementById('auth-container');
+
     if (user) {
         console.log("User is signed in:", user.uid);
-        // If we are on login.html, redirect to index.html
+        if (loginNavBtn) loginNavBtn.style.display = 'none';
+        if (profileArea) profileArea.style.display = 'flex';
+        if (authContainer) authContainer.style.display = 'flex';
+
+        // Redirect away from login page if already logged in
         if (window.location.pathname.includes("login.html")) {
-            // window.location.href = "index.html";
+            window.location.href = "index.html";
         }
     } else {
         console.log("No user signed in.");
+        if (loginNavBtn) loginNavBtn.style.display = 'block';
+        if (profileArea) profileArea.style.display = 'none';
+        if (authContainer) authContainer.style.display = 'flex';
     }
 });

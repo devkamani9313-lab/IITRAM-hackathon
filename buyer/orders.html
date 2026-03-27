@@ -17,7 +17,17 @@
             <div class="nav-links">
                 <a href="index.html">Marketplace</a>
                 <a href="orders.html" class="active">My Orders</a>
-                <button id="logout-btn" class="nav-logout">Logout</button>
+                
+                <div id="auth-container" class="auth-section" style="margin-left: 15px;">
+                    <button id="login-nav-btn" class="btn" style="padding: 6px 15px; border-radius: 6px; font-weight: 600; background: var(--primary-color); color: white; border: none; cursor: pointer; display: none;" onclick="window.location.href='login.html'">
+                        Login
+                    </button>
+                    
+                    <div id="profile-area" class="profile-dropdown" style="display: none; align-items: center; gap: 8px;">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid white;">
+                        <button id="logout-btn" class="nav-logout">Logout</button>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -93,6 +103,7 @@
         </section>
     </main>
 
+    <script type="module" src="auth.js"></script>
     <script type="module" src="orders.js"></script>
     <script>
         function viewOrder(id) {

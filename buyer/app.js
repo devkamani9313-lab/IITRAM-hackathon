@@ -55,21 +55,35 @@ async function fetchProducts() {
 
 function renderProducts(products) {
     const productGrid = document.getElementById("product-grid");
+    const countDisplay = document.getElementById("results-count");
+    
+    if (countDisplay) {
+        countDisplay.innerHTML = `Showing <strong>${products.length}</strong> live results`;
+    }
+    
     productGrid.innerHTML = "";
 
     products.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
+        card.style.cursor = "pointer";
+        card.onclick = () => window.location.href = `product.html?id=${p.id}`;
+        
         card.innerHTML = `
-            <div class="product-image" style="background-image: url('${p.imageUrl || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80'}')">
-                <span class="category-badge">${p.category || 'Produce'}</span>
+            <div class="product-image-wrapper">
+                <img src="${p.imageUrl || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400'}" alt="${p.name}" class="product-image">
+                ${p.isOrganic ? '<span class="badge">Organic</span>' : (p.isWholesale ? '<span class="badge" style="color: #2b6cb0;">Wholesale</span>' : '')}
             </div>
             <div class="product-info">
-                <h3>${p.name}</h3>
-                <p class="farmer-location">📍 ${p.location || 'Maharashtra'}</p>
-                <div class="price-unit">₹${p.price} <span>/ ${p.unit || 'kg'}</span></div>
-                <p class="min-order">Min Order: ${p.minOrder || '50kg'}</p>
-                <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('${p.id}', '${p.farmerId}', '${p.name}', '${p.farmerName}')">Negotiate Price</button>
+                <h3 class="product-name">${p.name}</h3>
+                <div class="farmer-info">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>${p.farmerName || 'Farmer'} • ${p.location || 'Maharashtra'}</span>
+                </div>
+                <div class="price-tag">₹${p.price} <span>/ ${p.unit || 'kg'}</span></div>
+                <button class="add-to-cart" onclick="event.stopPropagation();">
+                    <i class="fa-solid fa-plus"></i> Add to Cart
+                </button>
             </div>
         `;
         productGrid.appendChild(card);

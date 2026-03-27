@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Banking | FarmConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="payment.css">
+    <style>
+        .bank-box {
+            background: white; border-radius: 20px; padding: 40px; text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); max-width: 600px; margin: 40px auto;
+        }
+        .bank-select {
+            width: 100%; border: 2px solid #f1f5f9; padding: 15px; border-radius: 12px;
+            margin-top: 20px; font-size: 1rem; cursor: pointer; background: #f8fafc;
+        }
+        .popular-banks {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;
+        }
+        .bank-card {
+            border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; transition: 0.3s;
+            cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 700;
+        }
+        .bank-card:hover { border-color: var(--primary-blue); background: #f0f7ff; }
+        .bank-card i { font-size: 1.5rem; display: block; margin-bottom: 8px; color: var(--primary-color); }
+    </style>
+</head>
+<body style="background: #f8fafc;">
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">
+            <i class="fa-solid fa-seedling"></i>
+            Farm<span>Connect</span>
+        </a>
+    </nav>
+
+    <div class="payment-container">
+        <div class="bank-box">
+            <h1 style="margin-bottom: 5px;">Net Banking</h1>
+            <p style="color: var(--text-light); font-size: 0.9rem;">Select your bank to complete the payment of ₹904.25</p>
+
+            <h3 style="margin-top: 30px; font-size: 0.9rem; text-transform:uppercase; letter-spacing: 0.5px; color: #94a3b8;">Popular Banks</h3>
+            <div class="popular-banks">
+                <div class="bank-card" onclick="selectBank('SBI')"><i class="fa-solid fa-building-columns"></i>SBI</div>
+                <div class="bank-card" onclick="selectBank('HDFC')"><i class="fa-solid fa-building-columns"></i>HDFC</div>
+                <div class="bank-card" onclick="selectBank('ICICI')"><i class="fa-solid fa-building-columns"></i>ICICI</div>
+            </div>
+
+            <select class="bank-select" id="bank-dropdown">
+                <option value="">Choose another bank...</option>
+                <option value="AXIS">Axis Bank</option>
+                <option value="KOTAK">Kotak Mahindra Bank</option>
+                <option value="PNB">Punjab National Bank</option>
+                <option value="BOB">Bank of Baroda</option>
+            </select>
+            
+            <button class="btn" onclick="startProcessing()" style="width: 100%; margin-top: 30px; background: var(--primary-color);">
+                Login to Secure Bank Portal
+            </button>
+
+            <a href="payment-details.html" style="display:block; margin-top: 20px; color: var(--text-light); font-size:0.85rem; text-decoration:none; text-align:center;">← Other Methods</a>
+        </div>
+    </div>
+
+    <!-- Processing Overlay -->
+    <div id="processing-view" style="display:none; position:fixed; inset:0; background:rgba(255,255,255,0.95); z-index:1000; align-items:center; justify-content:center; text-align:center;">
+        <div>
+            <div id="spinner-icon">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 3rem; color: var(--primary-color);"></i>
+            </div>
+            <div id="success-icon" style="display:none;">
+                <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: #22c55e;"></i>
+            </div>
+            <h2 id="status-text" style="margin-top: 20px;">Redirecting to bank...</h2>
+            <p id="status-subtext" style="color: var(--text-light);">Do not refresh while we authenticate your banking session.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        window.selectBank = (name) => {
+            document.getElementById('bank-dropdown').value = name;
+        };
+
+        window.startProcessing = async () => {
+            const b = document.getElementById('bank-dropdown').value;
+            if(!b) return alert("Please select a bank.");
+
+            document.getElementById('processing-view').style.display = 'flex';
+            
+            setTimeout(async () => {
+                document.getElementById('spinner-icon').style.display = 'none';
+                document.getElementById('success-icon').style.display = 'block';
+                document.getElementById('status-text').innerText = "Bank Transaction Successful!";
+                document.getElementById('status-subtext').innerText = "Order details are being finalized.";
+
+                const orderId = localStorage.getItem('lastOrderId');
+                if (orderId) {
+                    try {
+                        await updateDoc(doc(db, "buyer_orders", orderId), {
+                            status: "approved",
+                            paymentMethod: "Net Banking (" + b + ")",
+                            paymentId: "NB_" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                            updatedAt: serverTimestamp()
+                        });
+                    } catch (e) {
+                        console.error("Error updating order:", e);
+                    }
+                }
+
+                setTimeout(() => {
+                    window.location.href = "orders.html";
+                }, 1500);
+            }, 3000);
+        };
+    </script>
+
+</body>
+</html>

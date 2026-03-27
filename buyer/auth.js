@@ -1,18 +1,4 @@
-import { auth, db } from "./firebase-config.js";
-import { 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { 
-    doc, 
-    setDoc, 
-    getDoc 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// Helper to convert mobile number to a dummy email for Firebase Auth
-const mobileToEmail = (mobile) => `${mobile.replace(/\s+/g, '')}@farmconnect.com`;
+import { db, collection, addDoc, getDocs, query, where, doc, getDoc } from "./firebase-config.js";
 
 // Handle Registration
 const registerForm = document.getElementById('register-form');
@@ -23,28 +9,46 @@ if (registerForm) {
         const mobile = document.getElementById('reg-mobile').value;
         const location = document.getElementById('reg-location').value;
         const password = document.getElementById('reg-password').value;
+        const submitBtn = registerForm.querySelector('button');
 
-        const email = mobileToEmail(mobile);
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating Account...";
 
         try {
-            // 1. Create User in Firebase Auth
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
+            // Check if mobile already exists in the "users" collection
+            const q = query(collection(db, "users"), where("mobile", "==", mobile));
+            const querySnapshot = await getDocs(q);
+            
+            if (!querySnapshot.empty) {
+                alert("This mobile number is already registered!");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Create Account";
+                return;
+            }
 
-            // 2. Store additional metadata in Firestore
-            await setDoc(doc(db, "buyers", user.uid), {
-                name: name,
-                mobile: mobile,
-                location: location,
+            // Save new user (Buyer role) into "users"
+            await addDoc(collection(db, "users"), {
+                name,
+                mobile,
+                location,
+                password,
                 role: "buyer",
                 createdAt: new Date().toISOString()
             });
 
-            alert("Account created successfully!");
-            window.location.href = "index.html";
+            alert("Account created successfully! Please login.");
+            // Switch to login tab
+            if (typeof window.switchTab === 'function') {
+                window.switchTab('login');
+            } else {
+                location.reload();
+            }
         } catch (error) {
             console.error("Error during registration:", error);
-            alert("Registration failed: " + error.message);
+            alert("Registration failed. Please try again.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Account";
         }
     });
 }
@@ -56,55 +60,77 @@ if (loginForm) {
         e.preventDefault();
         const mobile = document.getElementById('login-mobile').value;
         const password = document.getElementById('login-password').value;
+        const submitBtn = loginForm.querySelector('button');
 
-        const email = mobileToEmail(mobile);
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Logging in...";
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            // Find buyer in "users" collection (NOT Firebase Auth)
+            const q = query(
+                collection(db, "users"), 
+                where("mobile", "==", mobile), 
+                where("password", "==", password),
+                where("role", "==", "buyer")
+            );
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                alert("Invalid mobile number or password for Buyer account.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Login to Dashboard";
+                return;
+            }
+
+            // Success: Store simple session
+            const userDoc = querySnapshot.docs[0];
+            const data = userDoc.data();
+            localStorage.setItem('buyerId', userDoc.id);
+            localStorage.setItem('buyerName', data.name);
+            
             alert("Logged in successfully!");
             window.location.href = "index.html";
         } catch (error) {
             console.error("Error during login:", error);
-            alert("Login failed: " + error.message);
+            alert("Login failed. Please try again.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Login to Dashboard";
         }
     });
 }
 
-// Initialize Logout Buttons across all pages
+// Logic to show/hide profile on the nav
 document.addEventListener('DOMContentLoaded', () => {
-    const logoutBtns = document.querySelectorAll('#logout-btn, .nav-logout');
-    logoutBtns.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                window.location.href = "login.html";
-            } catch (error) {
-                console.error("Error signing out:", error);
-            }
-        });
-    });
-});
-
-// Check auth state
-onAuthStateChanged(auth, (user) => {
+    const buyerId = localStorage.getItem('buyerId');
     const loginNavBtn = document.getElementById('login-nav-btn');
     const profileArea = document.getElementById('profile-area');
     const authContainer = document.getElementById('auth-container');
 
-    if (user) {
-        console.log("User is signed in:", user.uid);
+    if (buyerId) {
         if (loginNavBtn) loginNavBtn.style.display = 'none';
         if (profileArea) profileArea.style.display = 'flex';
-        if (authContainer) authContainer.style.display = 'flex';
-
-        // Redirect away from login page if already logged in
-        if (window.location.pathname.includes("login.html")) {
-            window.location.href = "index.html";
+        
+        // Handle Logout
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.onclick = (e) => {
+                e.preventDefault();
+                if (confirm("Log out of FarmConnect?")) {
+                    localStorage.removeItem('buyerId');
+                    localStorage.removeItem('buyerName');
+                    window.location.href = "login.html";
+                }
+            };
         }
     } else {
-        console.log("No user signed in.");
         if (loginNavBtn) loginNavBtn.style.display = 'block';
         if (profileArea) profileArea.style.display = 'none';
-        if (authContainer) authContainer.style.display = 'flex';
+        
+        // Redirect if trying to view orders without login
+        if (window.location.pathname.includes("orders.html") || window.location.pathname.includes("checkout.html")) {
+            alert("Please login as a Buyer first.");
+            window.location.href = "login.html";
+        }
     }
 });

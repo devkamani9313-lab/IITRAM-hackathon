@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmer Registration</title>
+    <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="farmer.css">
+</head>
+<body>
+    <a href="index.html" style="position:absolute; top:20px; left:20px; text-decoration:none; color:var(--dark-green); font-weight:bold;">← Back to Login</a>
+    
+    <div class="auth-container" style="background: var(--light-green);">
+        <div class="auth-card" style="max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); background: white; border: none;">
+            <h2 style="color: var(--dark-green); margin-bottom: 0.5rem;">🌾 Register Your Farm</h2>
+            <p style="color: var(--text-light); margin-bottom: 2rem;">Join the network to sell your harvest directly.</p>
+            
+            <form action="dashboard.html">
+                <div class="form-group">
+                    <label>Farm Name (or Your Name)</label>
+                    <input type="text" placeholder="e.g. Green Valley Farm" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" placeholder="Enter your mobile number" required>
+                </div>
+
+                <div class="form-group">
+                    <label>City / Location</label>
+                    <input type="text" placeholder="e.g. Pune, Maharashtra" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Create Password</label>
+                    <input type="password" placeholder="Create a secure password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <p>Already registered? <a href="index.html" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">Log in here</a></p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { db, collection, addDoc, query, where, getDocs } from "../assets/firebase-config.js";
+
+        const regForm = document.querySelector('form');
+        regForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const farmName = document.querySelectorAll('input')[0].value;
+            const mobile = document.querySelectorAll('input')[1].value;
+            const location = document.querySelectorAll('input')[2].value;
+            const password = document.querySelectorAll('input')[3].value;
+            const submitBtn = document.querySelector('button');
+
+            submitBtn.textContent = "Creating Account...";
+            submitBtn.disabled = true;
+
+            try {
+                // Check if mobile already exists
+                const q = query(collection(db, "users"), where("mobile", "==", mobile));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    alert("This mobile number is already registered!");
+                    submitBtn.textContent = "Create Account";
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // Create new user document
+                await addDoc(collection(db, "users"), {
+                    farmName,
+                    mobile,
+                    location,
+                    password,
+                    role: 'farmer',
+                    createdAt: new Date()
+                });
+
+                alert("Registration Successful! Please Log in.");
+                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Error creating account:", err);
+                alert("Something went wrong. Please try again.");
+                submitBtn.textContent = "Create Account";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

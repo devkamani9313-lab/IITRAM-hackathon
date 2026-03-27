@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,8 @@
     <style>
         body {
             /* Beautiful farm background with a softer glass overlay so the image pops */
-            background: linear-gradient(rgba(240, 253, 244, 0.4), rgba(255, 255, 255, 0.6)), 
-                        url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80') no-repeat center center/cover;
+            background: linear-gradient(rgba(240, 253, 244, 0.4), rgba(255, 255, 255, 0.6)),
+                url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80') no-repeat center center/cover;
             background-attachment: fixed;
             display: flex;
             justify-content: center;
@@ -25,8 +26,15 @@
         }
 
         @keyframes fadeInUP {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero-title {
@@ -36,10 +44,11 @@
             margin-bottom: 0.5rem;
             letter-spacing: -1.5px;
         }
-        
+
         .hero-title span {
             background: linear-gradient(135deg, var(--primary-green), #10b981);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -62,8 +71,8 @@
             border-radius: 24px;
             text-decoration: none;
             color: var(--text-dark);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-            border: 1px solid rgba(0,0,0,0.02);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.02);
             position: relative;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -72,13 +81,16 @@
         .role-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 6px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
             background: var(--primary-green);
             transform: scaleX(0);
             transition: transform 0.4s ease;
             transform-origin: left;
         }
-        
+
         /* Buyer gets a blue accent instead of green */
         .role-card.buyer::before {
             background: var(--primary-blue);
@@ -86,7 +98,7 @@
 
         .role-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
         }
 
         .role-card:hover::before {
@@ -127,12 +139,21 @@
         }
 
         @media(max-width: 768px) {
-            .cards-wrapper { flex-direction: column; }
-            .hero-title { font-size: 2.5rem; }
-            .role-card { padding: 2.5rem 1.5rem; }
+            .cards-wrapper {
+                flex-direction: column;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .role-card {
+                padding: 2.5rem 1.5rem;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="hero-container">
@@ -144,17 +165,20 @@
             <a href="./farmer/index.html" class="role-card">
                 <div class="icon-wrapper">🧑‍🌾</div>
                 <h2 class="card-title">I'm a Farmer</h2>
-                <p class="card-desc">List your fresh produce, negotiate directly, and manage all your sales in one place.</p>
+                <p class="card-desc">List your fresh produce, negotiate directly, and manage all your sales in one
+                    place.</p>
             </a>
 
             <!-- Buyer Routing Card -->
             <a href="./buyer/index.html" class="role-card buyer">
                 <div class="icon-wrapper">🏬</div>
                 <h2 class="card-title">I'm a Buyer</h2>
-                <p class="card-desc">Source high-quality, local produce directly from the farm for your restaurant or store.</p>
+                <p class="card-desc">Source high-quality, local produce directly from the farm for your restaurant or
+                    store.</p>
             </a>
         </div>
     </div>
 
 </body>
+
 </html>

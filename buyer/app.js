@@ -1,50 +1,59 @@
-import { auth, db } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
 import { 
     collection, 
     getDocs, 
     query, 
     where, 
     addDoc, 
-    serverTimestamp,
-    doc,
-    getDoc
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-let currentUser = null;
+// -- 1. Firestore Session Check (Replacement for Firebase Auth) --
+const buyerId = localStorage.getItem('buyerId');
+const buyerName = localStorage.getItem('buyerName');
+
 let allProducts = [];
 
-// -- 1. Authentication Guard (Bypassed) --
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        currentUser = user;
-        initMarketplace();
-    } else {
-        console.log("No user found. Running in UI Preview Mode.");
-        // Still initializing to allow the UI to show with sample data
-        initMarketplace();
-    }
-});
+// Initialize marketplace immediately with session support
+initMarketplace();
 
 async function initMarketplace() {
     await fetchProducts();
     setupFilters();
+    updateUIForBuyer();
+}
+
+// Function to handle showing/hiding login buttons based on Firestore Session
+function updateUIForBuyer() {
+    const loginNavBtn = document.getElementById('login-nav-btn');
+    const profileArea = document.getElementById('profile-area');
+    
+    if (buyerId) {
+        if (loginNavBtn) loginNavBtn.style.display = 'none';
+        if (profileArea) profileArea.style.display = 'flex';
+    } else {
+        if (loginNavBtn) loginNavBtn.style.display = 'block';
+        if (profileArea) profileArea.style.display = 'none';
+    }
 }
 
 // -- 2. Fetch Products from Firestore --
 async function fetchProducts() {
     const productGrid = document.getElementById("product-grid");
-    
+    if (!productGrid) return;
+
     try {
         const querySnapshot = await getDocs(collection(db, "products"));
         allProducts = [];
-        querySnapshot.forEach((doc) => {
-            allProducts.push({ id: doc.id, ...doc.data() });
+        querySnapshot.forEach((docSnap) => {
+            allProducts.push({ id: docSnap.id, ...docSnap.data() });
         });
 
-        // If no products exist yet (new setup), show a message or mock data could be added here
         if (allProducts.length === 0) {
-            console.log("No products in Firestore. Using sample data for demonstration.");
+            productGrid.innerHTML = `
+                <div class="empty-state-card" style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                    <p style="color: var(--text-light);">No crops available in the marketplace yet.</p>
+                </div>`;
         } else {
             renderProducts(allProducts);
         }
@@ -66,23 +75,21 @@ function renderProducts(products) {
     products.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
-        card.style.cursor = "pointer";
         card.onclick = () => window.location.href = `product.html?id=${p.id}`;
         
         card.innerHTML = `
             <div class="product-image-wrapper">
                 <img src="${p.imageUrl || 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400'}" alt="${p.name}" class="product-image">
-                ${p.isOrganic ? '<span class="badge">Organic</span>' : (p.isWholesale ? '<span class="badge" style="color: #2b6cb0;">Wholesale</span>' : '')}
+                ${p.isOrganic ? '<span class="badge">Organic</span>' : ''}
             </div>
-            <div class="product-info">
-                <h3 class="product-name">${p.name}</h3>
-                <div class="farmer-info">
-                    <i class="fa-solid fa-location-dot"></i>
-                    <span>${p.farmerName || 'Farmer'} • ${p.location || 'Maharashtra'}</span>
+            <div class="product-info" style="padding: 1.5rem;">
+                <h3 class="product-name" style="font-weight: 800; font-size: 1.25rem;">${p.name}</h3>
+                <div class="farmer-info" style="padding: 0.5rem 0; color: #718096; font-size: 0.9rem;">
+                    📍 ${p.location || 'Maharashtra'} • 🧑‍🌾 ${p.farmerName || 'Farmer'}
                 </div>
-                <div class="price-tag">₹${p.price} <span>/ ${p.unit || 'kg'}</span></div>
-                <button class="add-to-cart" onclick="event.stopPropagation();">
-                    <i class="fa-solid fa-plus"></i> Add to Cart
+                <div class="price-tag" style="margin-top: 0.5rem; font-weight: 900; color: #2fb362; font-size: 1.4rem;">₹${p.price} <span style="font-size: 0.9rem; color: #a0aec0;">/ ${p.unit || 'kg'}</span></div>
+                <button class="add-to-cart" style="width: 100%; margin-top: 1.5rem; background: #eafaf1; color: #2fb362; border: none; padding: 0.8rem; border-radius: 12px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); window.startNegotiation('${p.id}', '${p.farmerId}', '${p.name}')">
+                    🤝 Negotiate Price
                 </button>
             </div>
         `;
@@ -96,8 +103,8 @@ function setupFilters() {
     const categoryFilter = document.getElementById("category-filter");
 
     const filterProducts = () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const categoryTerm = categoryFilter.value;
+        const searchTerm = (searchInput?.value || "").toLowerCase();
+        const categoryTerm = categoryFilter?.value || "all";
 
         const filtered = allProducts.filter(p => {
             const matchesSearch = p.name.toLowerCase().includes(searchTerm);
@@ -112,57 +119,25 @@ function setupFilters() {
 }
 
 // -- 4. Start Negotiation --
-window.startNegotiation = async (productId, farmerId, productName, farmerName) => {
-    if (!currentUser) return alert("Please log in to start a negotiation.");
+window.startNegotiation = async (productId, farmerId, productName) => {
+    if (!buyerId) return alert("Please log in as a Buyer first.");
 
     try {
-        // Check if negotiation already exists
-        const q = query(
-            collection(db, "negotiations"),
-            where("buyerId", "==", currentUser.uid),
-            where("productId", "==", productId)
-        );
-        const existing = await getDocs(q);
-
-        if (!existing.empty) {
-            window.location.href = "negotiations.html";
-            return;
-        }
-
-        // Create new negotiation
+        // Query shared collection "negotiations"
         const newNeg = await addDoc(collection(db, "negotiations"), {
-            buyerId: currentUser.uid,
+            buyerId: buyerId,
+            buyerName: buyerName,
             farmerId: farmerId || "mock-farmer-id",
-            farmerName: farmerName || "Farmer Ramesh",
             productId: productId,
             productName: productName,
             status: "active",
-            lastMessage: "Negotiation started",
-            updatedAt: serverTimestamp(),
             createdAt: serverTimestamp()
         });
 
-        // Add initial message
-        await addDoc(collection(db, "negotiations", newNeg.id, "messages"), {
-            senderId: currentUser.uid,
-            content: `I'm interested in ${productName}. Can we discuss the price?`,
-            type: "text",
-            timestamp: serverTimestamp()
-        });
-
-        window.location.href = "negotiations.html";
+        alert("Negotiation request sent to the farmer!");
+        window.location.href = "index.html";
     } catch (e) {
         console.error("Error starting negotiation: ", e);
         alert("Failed to start negotiation. Please try again.");
     }
 };
-
-// Logout logic
-const logoutBtn = document.getElementById("logout-btn");
-if (logoutBtn) {
-    logoutBtn.onclick = () => {
-        signOut(auth).then(() => {
-            window.location.href = "login.html";
-        });
-    };
-}

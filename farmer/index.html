@@ -9,23 +9,72 @@
 <body>
     <a href="../index.html" style="position:absolute; top:20px; left:20px; text-decoration:none; color:var(--dark-green); font-weight:bold;">← Back to Role Select</a>
     
-    <div class="auth-container">
-        <div class="auth-card">
+    <div class="auth-container" style="background: var(--light-green);">
+        <div class="auth-card" style="box-shadow: 0 10px 40px rgba(0,0,0,0.04); background: white; border: none;">
             <h2 style="color: var(--dark-green); margin-bottom: 2rem;">🧑‍🌾 Farmer Login</h2>
             
-            <form action="#" method="POST">
+            <form action="dashboard.html">
                 <div class="form-group">
                     <label>Phone Number</label>
                     <input type="tel" placeholder="Enter mobile number" required>
                 </div>
                 <div class="form-group">
-                    <label>Password / OTP</label>
-                    <input type="password" placeholder="Enter code" required>
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter secret password" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-full">Login</button>
             </form>
+            
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <p>New to FarmConnect? <a href="register.html" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">Sign up your farm</a></p>
+            </div>
 
         </div>
     </div>
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { db, collection, query, where, getDocs } from "../assets/firebase-config.js";
+
+        const loginForm = document.querySelector('form');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const mobile = document.querySelectorAll('input')[0].value;
+            const password = document.querySelectorAll('input')[1].value;
+            const submitBtn = document.querySelector('button');
+
+            submitBtn.textContent = "Logging in...";
+            submitBtn.disabled = true;
+
+            try {
+                // Query Firestore for user
+                const q = query(collection(db, "users"), where("mobile", "==", mobile), where("password", "==", password), where("role", "==", "farmer"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    alert("Invalid mobile number or password for Farmer account.");
+                    submitBtn.textContent = "Log in to Marketplace 🔍";
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // Get user data
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+
+                // Store user session info
+                localStorage.setItem('farmerId', userDoc.id);
+                localStorage.setItem('farmName', userData.farmName);
+                localStorage.setItem('farmerLocation', userData.location);
+
+                window.location.href = "dashboard.html";
+            } catch (err) {
+                console.error("Error during login:", err);
+                alert("Something went wrong. Please try again.");
+                submitBtn.textContent = "Log in to Marketplace 🔍";
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>

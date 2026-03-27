@@ -1,36 +1,420 @@
+/* =========================================
+   FARMER PORTAL: THE ULTIMATE PREMIUM LIGHT THEME
+   ========================================= */
+
+/* (Using global variables from assets/global.css) */
+
+
+/* Authentication (Login/Register) Glassmorphism */
 .auth-container { 
     display: flex; 
     justify-content: center; 
     align-items: center; 
     min-height: 100vh; 
-    background: #e8f5e9; 
+    background: var(--light-green);
 }
+
 .auth-card { 
     background: white; 
-    padding: 3rem; 
-    border-radius: 1rem; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    padding: 4rem 3.5rem; 
+    border-radius: 40px; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04); 
     width: 100%; 
-    max-width: 400px; 
+    max-width: 520px; 
     text-align: center; 
+    border: none;
 }
+
 .form-group { 
     margin-bottom: 1.5rem; 
     text-align: left; 
 }
+
 .form-group label { 
     display: block; 
-    margin-bottom: 0.5rem; 
+    margin-bottom: 0.6rem; 
     font-weight: 600; 
+    font-size: 0.95rem;
+    color: var(--text-dark);
 }
-.form-group input { 
+
+.form-group input, .form-group select { 
     width: 100%; 
-    padding: 0.8rem; 
-    border: 1px solid #ccc; 
-    border-radius: 0.5rem; 
+    padding: 0.95rem 1.4rem; 
+    border: 2px solid var(--border-soft); 
+    border-radius: 16px; 
+    font-size: 1rem;
+    background: #fdfdfd;
+    transition: all 0.3s ease;
 }
-.btn-full { 
-    width: 100%; 
-    padding: 1rem; 
-    margin-top: 1rem; 
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 4px rgba(47, 179, 98, 0.1);
+    background: #fff;
+}
+
+/* =========================================
+   DASHBOARD: WORLD-CLASS LIGHT THEME
+   ========================================= */
+
+.dashboard-body {
+    background-color: #f7fafc;
+    min-height: 100vh;
+}
+
+/* Sticky Header Customization */
+.dashboard-header-main {
+    background: white;
+    border-bottom: 1px solid #edf2f7;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.logo-area {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+
+.logo-area span {
+    background: linear-gradient(135deg, var(--primary-green), #10b981);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.user-area-pill {
+    background: #f8fafc;
+    padding: 0.4rem 0.5rem 0.4rem 1.4rem;
+    border-radius: 50px;
+    border: 1px solid #edf2f7;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.greet-text { font-size: 0.9rem; color: #718096; }
+.greet-text strong { color: #1a202c; font-weight: 700; }
+
+.minimal-logout-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.minimal-logout-btn:hover { background: #fecaca; }
+
+/* Dashboard Main Content Spacing */
+.dashboard-main-content {
+    padding: 4rem 0 5rem;
+}
+
+/* Overview Section Styling */
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+}
+
+.header-text h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+}
+
+.header-text p {
+    color: #718096;
+    font-size: 1.15rem;
+    max-width: 500px;
+}
+
+/* Clean Info Tiles */
+.stats-stripe {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 4rem;
+}
+
+.stat-tile {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    flex: 1;
+}
+
+.tile-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #718096;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.tile-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #2d3748;
+}
+
+/* Storefront Section Styling */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 5rem;
+}
+
+/* Premium Product Cards */
+.premium-card-item {
+    background: white;
+    padding: 2.5rem 2rem;
+    border-radius: 28px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid #edf2f7;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.premium-card-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    border-color: #2fb362;
+}
+
+.p-icon {
+    width: 65px;
+    height: 65px;
+    background: #eafaf1;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.p-name { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.4rem; }
+.p-meta { color: #718096; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.p-price { font-size: 1.4rem; font-weight: 800; color: #2fb362; }
+
+.p-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 2rem;
+}
+
+.p-btn {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1.5px solid #edf2f7;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.p-btn:hover { background: #fff; border-color: #718096; }
+.p-btn-del:hover { color: #ef4444; border-color: #feb2b2; }
+
+/* Enhanced Empty State */
+.empty-state-card {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 6rem 2rem;
+    background: white;
+    border: 2px dashed #edf2f7;
+    border-radius: 32px;
+}
+
+.empty-icon-wrap { font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.15; }
+.empty-state-card h3 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+.empty-state-card p { color: #718096; max-width: 400px; margin: 0 auto; }
+
+/* Negotiation & Sales History Sections */
+.negotiation-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.negotiation-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 24px;
+    border: 1px solid #edf2f7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    transition: transform 0.2s;
+}
+
+.negotiation-card:hover { transform: translateY(-3px); }
+
+.negotiation-info { display: flex; flex-direction: column; gap: 0.5rem; }
+.buyer-name { font-weight: 800; font-size: 1.1rem; color: var(--text-dark); }
+.offer-details { color: var(--text-light); font-size: 0.95rem; }
+
+.price-comparison {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #f8fafc;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+}
+
+.old-p { text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; }
+.new-p { color: #2fb362; font-weight: 800; font-size: 1.2rem; }
+
+.negotiation-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.n-btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.n-btn-accept { background: #eafaf1; color: #2fb362; }
+.n-btn-accept:hover { background: #2fb362; color: white; }
+.n-btn-reject { background: #fee2e2; color: #ef4444; }
+.n-btn-reject:hover { background: #ef4444; color: white; }
+
+/* Activity Log Card (Order Row Style) */
+.activity-log-card {
+    background: white;
+    border-radius: 28px;
+    padding: 1rem;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.order-row-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+    transition: background 0.2s;
+}
+
+.order-row-item:hover { background: #f8fafc; }
+.order-row-item:not(:last-child) { border-bottom: 1px solid #f1f5f9; }
+
+.o-detail { display: flex; flex-direction: column; gap: 0.2rem; }
+.o-label { font-size: 0.75rem; font-weight: 800; color: #a0aec0; text-transform: uppercase; }
+.o-value { font-weight: 700; color: #2d3748; }
+
+.o-status-pill {
+    padding: 0.5rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.st-pending { background: #fffbeb; color: #d97706; }
+
+.order-empty-message { padding: 4rem; text-align: center; color: #a0aec0; font-size: 1rem; }
+
+/* Modal Design (Glass & Focus) */
+.modal-dimmer {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    transition: all 0.3s ease;
+}
+
+.modal-dimmer.active { opacity: 1; visibility: visible; }
+
+.modal-window {
+    background: white;
+    width: 95%;
+    max-width: 550px;
+    padding: 3.5rem;
+    border-radius: 40px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+    transform: scale(0.9);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-dimmer.active .modal-window { transform: scale(1); }
+
+.modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+.modal-top h2 { font-weight: 900; font-size: 2rem; }
+.close-modal-btn { background: none; border: none; font-size: 2.5rem; color: #cbd5e0; cursor: pointer; }
+
+.input-block { margin-bottom: 1.8rem; display: flex; flex-direction: column; }
+.input-block label { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.7rem; }
+.input-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
+
+.price-input-bar { position: relative; display: flex; align-items: center; }
+.price-input-bar span { position: absolute; left: 1.5rem; font-weight: 800; }
+.price-input-bar input { padding-left: 3rem !important; }
+
+/* Thicker, more premium inputs for the modal */
+.modal-window input, 
+.modal-window select {
+    padding: 1.2rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 16px;
+    border: 2px solid #edf2f7;
+    background: #fdfdfd;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.modal-window input:focus, 
+.modal-window select:focus {
+    outline: none;
+    border-color: #2fb362;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(47, 179, 98, 0.1);
+}
+
+@media(max-width: 800px) {
+    .overview-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+    .header-text h1 { font-size: 2.2rem; }
+    .stats-stripe { flex-direction: column; }
 }

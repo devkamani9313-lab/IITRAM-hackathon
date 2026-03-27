@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard - FarmConnect</title>
+    <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="farmer.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Clean Premium Navigation -->
+    <header class="dashboard-header-main">
+        <div class="header-inner container">
+            <div class="logo-area">
+                🌾 <span>FarmConnect</span>
+            </div>
+            <div class="user-area-pill">
+                <span class="greet-text">Welcome back, <strong id="displayFarmName">Green Valley Farm</strong></span>
+                <button class="minimal-logout-btn" id="logoutBtn" onclick="confirmFarmerLogout()">Log out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main-content">
+        
+        <!-- Heading and Overview Section -->
+        <section class="overview-section container">
+            <div class="overview-header">
+                <div class="header-text">
+                    <h1>Dashboard</h1>
+                    <p>Track your inventory, manage sales, and connect with wholesale buyers.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="openModalBtn" onclick="openFarmerModal()">+ Grow New Listing</button>
+                </div>
+            </div>
+            
+            <div class="stats-stripe">
+                <div class="stat-tile">
+                    <span class="tile-label">Live Listings</span>
+                    <span class="tile-value" id="totalProducts">0</span>
+                </div>
+                <div class="stat-tile">
+                    <span class="tile-label">Orders Received</span>
+                    <span class="tile-value" id="activeOrders">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Pending Negotiations (Offers from Buyers) -->
+        <section class="negotiation-section container" style="margin-bottom: 4rem;">
+            <div class="shelf-header">
+                <h2 style="display: flex; align-items: center; gap: 10px;">Pending Negotiations 🔔</h2>
+                <p style="color: var(--text-light); font-size: 0.95rem;">Review and respond to price offers from interested buyers.</p>
+            </div>
+            <div id="negotiationList">
+                <div class="empty-order-card" style="padding: 3rem; text-align: center; background: white; border-radius: 20px; border: 1px dashed var(--border-soft);">
+                    <p style="color: var(--text-light);">No pending offers at the moment.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Storefront Management -->
+        <section class="storefront-section container">
+            <h2 class="section-title">Your Live Storefront</h2>
+            <div class="product-grid" id="produceGrid">
+                <!-- Illustrated Empty state -->
+                <div class="empty-state-card" id="emptyState">
+                    <div class="empty-icon-wrap">🌿</div>
+                    <h3>Your shop is empty</h3>
+                    <p>Start listing your fresh harvest to attract wholesale buyers today.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Sales History (Completed Purchases) -->
+        <section class="activity-section container">
+            <h2 class="section-title">Sales History & Buyers</h2>
+            <div class="activity-log-card">
+                <div class="order-list" id="salesHistoryList">
+                    <div class="order-empty-message">
+                        <p>No sales history yet. Your completed orders will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LISTING MODAL -->
+    <div class="modal-dimmer" id="modalOverlay">
+        <div class="modal-window">
+            <div class="modal-top">
+                <h2>List Fresh Produce</h2>
+                <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+            </div>
+
+            <form id="addProduceForm" class="modal-form">
+                <div class="input-block">
+                    <label>Item Name</label>
+                    <input type="text" id="prodName" placeholder="e.g. Red Tomatoes" required>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-block">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="prodQty" placeholder="100" required>
+                    </div>
+                    <div class="input-block">
+                        <label>Unit</label>
+                        <select id="prodUnit">
+                            <option value="kg">kg</option>
+                            <option value="Tons">Tons</option>
+                            <option value="Dozen">Dozen</option>
+                            <option value="Quintal">Quintal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-block">
+                    <label>Asking Price (per unit)</label>
+                    <div class="price-input-bar">
+                        <span>₹</span>
+                        <input type="number" id="prodPrice" placeholder="50" required>
+                    </div>
+                </div>
+
+                <div class="input-block">
+                    <label>Product Category 🏷️</label>
+                    <select id="prodCategory" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="vegetables">Vegetables 🥦</option>
+                        <option value="fruits">Fruits 🍎</option>
+                        <option value="grains">Grains & Cereals 🌾</option>
+                    </select>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary btn-full">Post to Marketplace 🚀</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="dashboard.js"></script>
+</body>
+</html>

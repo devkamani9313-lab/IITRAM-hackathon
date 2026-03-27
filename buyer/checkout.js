@@ -156,8 +156,14 @@ window.processPayment = async () => {
     payBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
     payBtn.disabled = true;
 
-    // Get selected payment method
     const selectedMethod = document.querySelector('input[name="pay-method"]:checked').value;
+    const isCOD = selectedMethod === 'cod';
+
+    if (isCOD) {
+        payBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Placing Order...';
+    } else {
+        payBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+    }
 
     try {
         // --- 1. CRITICAL STOCK VALIDATION ---
@@ -215,8 +221,8 @@ window.processPayment = async () => {
                 farmerName: fData.farmerName,
                 productName: fData.items.join(", "),
                 totalAmount: Number(finalFarmerAmount.toFixed(2)),
-                status: "paid",
-                paymentMethod: selectedMethod,
+                status: isCOD ? "placed" : "paid",
+                paymentMethod: selectedMethod === 'cod' ? "Cash on Delivery" : selectedMethod.toUpperCase(),
                 deliveryMethod: deliveryFee === 0 ? "Self Pickup" : "Home Delivery",
                 createdAt: serverTimestamp()
             };
@@ -241,7 +247,11 @@ window.processPayment = async () => {
         const deletePromises = realCartItems.map(item => deleteDoc(doc(db, "buyer_cart", item.id)));
         await Promise.all(deletePromises);
         
-        alert("Payment Successful! Your orders have been sent to the farmers.");
+        if (isCOD) {
+            alert("Order placed successfully! Please pay the farmer ₹" + cartTotalAmount.toFixed(2) + " upon delivery.");
+        } else {
+            alert("Payment Successful! Your orders have been sent to the farmers.");
+        }
         window.location.href = "orders.html"; 
     } catch (e) {
         console.error("Error processing payment: ", e);

@@ -239,7 +239,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="o-detail"><span class="o-label">Items</span><span class="o-value" style="font-weight:600;">${order.productName}</span></div>
                 <div class="o-detail"><span class="o-label">Amount</span><span class="o-value" style="color: #2fb362; font-weight: 800; font-size:1.1rem;">₹${order.totalAmount}</span></div>
                 <div class="o-detail" style="text-align: right;">
-                    <span style="background:#eafaf1; color:#2fb362; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; border: 1px solid #c8e6c9;">Paid ✅</span>
+                    ${order.paymentMethod === 'Cash on Delivery' 
+                        ? `<span style="background:#fff7ed; color:#c2410c; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; border: 1px solid #fdba74;">Unpaid (COD) 🚚</span>`
+                        : `<span style="background:#eafaf1; color:#2fb362; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; border: 1px solid #c8e6c9;">Paid ✅</span>`
+                    }
                 </div>
             `;
             list.appendChild(row);

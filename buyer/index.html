@@ -2,18 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Buyer Workspace Placeholder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmConnect - Buyer Marketplace</title>
     <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
-<body style="display:flex; justify-content:center; align-items:center; height:100vh; text-align:center;">
-    <div>
-        <div style="font-size:4rem; margin-bottom:1rem;">🏬</div>
-        <h2>Buyer Team Workspace</h2>
-        <p style="opacity: 0.8; max-width: 400px; margin: 10px auto;">
-            This folder is ready! The other two members of your team can build out the professional buyer dashboard right here.
-        </p>
-        <br><br>
-        <a href="../index.html" class="btn" style="background:#333; color:white;">← Go Back</a>
-    </div>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">🏬 Buyer Console</a>
+            <div class="nav-links">
+                <a href="index.html" class="active">Marketplace</a>
+                <a href="orders.html">My Orders</a>
+                <button id="logout-btn" class="nav-logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Marketplace Header -->
+    <header class="marketplace-header">
+        <div class="header-content">
+            <h1>Fresh From The Farm</h1>
+            <p>Direct wholesale sourcing for your business.</p>
+        </div>
+        <div class="search-bar">
+            <input type="text" id="product-search" placeholder="Search for produce (e.g. Tomatoes, Rice)...">
+            <select id="category-filter">
+                <option value="all">All Categories</option>
+                <option value="vegetables">Vegetables</option>
+                <option value="fruits">Fruits</option>
+                <option value="grains">Grains</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Product Grid -->
+    <main class="product-grid-container">
+        <div id="product-grid" class="product-grid">
+            <!-- Sample Product Cards -->
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1518977676601-b53f02bad67b?auto=format&fit=crop&q=80')">
+                    <span class="category-badge">Vegetables</span>
+                </div>
+                <div class="product-info">
+                    <h3>Organic Tomatoes</h3>
+                    <p class="farmer-location">📍 Nasik, Maharashtra</p>
+                    <div class="price-unit">₹40 <span>/ kg</span></div>
+                    <p class="min-order">Min Order: 50kg</p>
+                    <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('tomatoes-01')">Negotiate Price</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80')">
+                    <span class="category-badge">Grains</span>
+                </div>
+                <div class="product-info">
+                    <h3>Basmati Rice</h3>
+                    <p class="farmer-location">📍 Karnal, Haryana</p>
+                    <div class="price-unit">₹85 <span>/ kg</span></div>
+                    <p class="min-order">Min Order: 100kg</p>
+                    <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('rice-01')">Negotiate Price</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&q=80')">
+                    <span class="category-badge">Fruits</span>
+                </div>
+                <div class="product-info">
+                    <h3>Fresh Oranges</h3>
+                    <p class="farmer-location">📍 Nagpur, Maharashtra</p>
+                    <div class="price-unit">₹60 <span>/ kg</span></div>
+                    <p class="min-order">Min Order: 20kg</p>
+                    <button class="btn btn-primary start-neg-btn" onclick="startNegotiation('oranges-01')">Negotiate Price</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>

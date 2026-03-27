@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - FarmConnect</title>
+    <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="orders.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">🏬 Buyer Console</a>
+            <div class="nav-links">
+                <a href="index.html">Marketplace</a>
+                <a href="orders.html" class="active">My Orders</a>
+                <button id="logout-btn" class="nav-logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="orders-container">
+        <!-- Header with Back Button -->
+        <div class="details-header">
+            <a href="orders.html" class="back-link">← Back to List</a>
+            <div class="details-topline">
+                <h1 id="order-id-display">Order #ORD-1042</h1>
+                <span id="status-display" class="status-badge approved">Delivered</span>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <section class="info-grid">
+            <div class="info-block">
+                <h3>Farmer Info</h3>
+                <p id="farmer-name" style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.25rem;">Farmer Ramesh</p>
+                <p id="farmer-loc" style="color: var(--text-light); font-size: 0.9rem;">📍 Nasik, Maharashtra</p>
+            </div>
+            <div class="info-block">
+                <h3>Delivery Address</h3>
+                <p>Wholesale Mart A-12, Sector 5</p>
+                <p>Market Area, APMC Market</p>
+                <p>Mumbai, Maharashtra 400001</p>
+            </div>
+            <div class="info-block">
+                <h3>Payment Details</h3>
+                <p>Method: <strong>UPI / NetBanking</strong></p>
+                <p>Status: <strong style="color: var(--status-approved-text)">Paid</strong></p>
+                <p>Date: Mar 25, 2026</p>
+            </div>
+        </section>
+
+        <!-- Invoice Card -->
+        <section class="invoice-card">
+            <div class="invoice-header">
+                <h2>Invoice Summary</h2>
+                <button class="btn-outline" onclick="downloadInvoice()">Download PDF Invoice</button>
+            </div>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th style="text-align: center;">Qty</th>
+                        <th style="text-align: right;">Unit Price</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="invoice-items">
+                    <tr>
+                        <td>
+                            <div style="font-weight: 700;">Organic Tomatoes (A-Grade)</div>
+                            <div style="font-size: 0.8rem; color: var(--text-light);">Direct from harvest, Nasik branch.</div>
+                        </td>
+                        <td style="text-align: center;">50 kg</td>
+                        <td style="text-align: right;">₹50/kg</td>
+                        <td style="text-align: right; font-weight: 700;">₹2,500</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" style="text-align: right; border-bottom: none;">Grand Total</th>
+                        <th style="text-align: right; border-bottom: none;">₹2,500</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+
+        <!-- Dynamic Actions: Refund Section -->
+        <section id="refund-section" class="refund-section">
+            <div class="refund-card">
+                <div class="refund-text">
+                    <h3>Something wrong?</h3>
+                    <p>If the delivery was damaged or incorrect, you can request a return or refilling below.</p>
+                </div>
+                <button id="refund-btn" class="btn-refund" onclick="toggleRefundForm()">Request Refund / Returns</button>
+            </div>
+
+            <!-- Hidden Refund Form -->
+            <form id="refund-form" class="refund-form" style="display:none;">
+                <h3 style="margin-bottom: 1rem;">Refund Request</h3>
+                <div class="input-group">
+                    <label style="font-weight: 600; font-size: 0.9rem;">Reason for Request</label>
+                    <textarea id="refund-reason" placeholder="Please describe the issue in detail (e.g., damaged items, incorrect quantity)..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem; background: var(--buyer-primary);">Submit Refund Application</button>
+            </form>
+        </section>
+    </main>
+
+    <script type="module" src="orders.js"></script>
+    <script>
+        function toggleRefundForm() {
+            const form = document.getElementById('refund-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

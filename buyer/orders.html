@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmConnect - My Orders</title>
+    <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="orders.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">🏬 Buyer Console</a>
+            <div class="nav-links">
+                <a href="index.html">Marketplace</a>
+                <a href="orders.html" class="active">My Orders</a>
+                <button id="logout-btn" class="nav-logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Orders Content -->
+    <main class="orders-container">
+        <header class="orders-header">
+            <h1>Order History</h1>
+            <p>Review and track your wholesale purchases.</p>
+        </header>
+
+        <!-- Order Summary Stats -->
+        <section class="order-stats">
+            <div class="stat-card">
+                <p>Total Orders</p>
+                <h2 id="stat-total">3</h2>
+            </div>
+            <div class="stat-card">
+                <p>Delivered</p>
+                <h2 id="stat-delivered">2</h2>
+            </div>
+            <div class="stat-card">
+                <p>Pending</p>
+                <h2 id="stat-pending">1</h2>
+            </div>
+        </section>
+
+        <!-- Orders Table -->
+        <section class="orders-table-wrapper">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Product</th>
+                        <th>Farmer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-list">
+                    <!-- Sample Data -->
+                    <tr class="order-row" onclick="viewOrder('ORD-1042')">
+                        <td>#ORD-1042</td>
+                        <td>Organic Tomatoes</td>
+                        <td>Farmer Ramesh</td>
+                        <td>₹2,500</td>
+                        <td><span class="status-badge approved">Delivered</span></td>
+                        <td>Mar 25, 2026</td>
+                        <td><button class="btn-text">View Details</button></td>
+                    </tr>
+                    <tr class="order-row" onclick="viewOrder('ORD-1038')">
+                        <td>#ORD-1038</td>
+                        <td>Basmati Rice</td>
+                        <td>Sunil K.</td>
+                        <td>₹12,400</td>
+                        <td><span class="status-badge pending">In Transit</span></td>
+                        <td>Mar 20, 2026</td>
+                        <td><button class="btn-text">View Details</button></td>
+                    </tr>
+                    <tr class="order-row" onclick="viewOrder('ORD-1031')">
+                        <td>#ORD-1031</td>
+                        <td>Fresh Oranges</td>
+                        <td>Nitin Dev</td>
+                        <td>₹3,600</td>
+                        <td><span class="status-badge approved">Delivered</span></td>
+                        <td>Mar 15, 2026</td>
+                        <td><button class="btn-text">View Details</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script type="module" src="orders.js"></script>
+    <script>
+        function viewOrder(id) {
+            window.location.href = `order-details.html?id=${id}`;
+        }
+    </script>
+</body>
+</html>

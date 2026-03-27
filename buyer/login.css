@@ -1,0 +1,150 @@
+/* Custom Login Styles for Buyer Dashboard */
+
+.login-body {
+    background: linear-gradient(135deg, #5aaadf 0%, #5aaadf 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    width: 450px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    padding: 3rem 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-logo {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+
+.login-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.login-header p {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+/* Tab Switcher Styles */
+.tab-switcher {
+    display: flex;
+    gap: 1rem;
+    background: #f1f5f9;
+    padding: 0.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    flex: 1;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: white;
+    color: var(--primary-blue);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Styles */
+.auth-form {
+    display: none;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.auth-form.active {
+    display: flex;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.input-group input {
+    padding: 0.8rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-blue);
+}
+
+.auth-btn {
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--primary-blue), #2a4365) !important;
+    color: white;
+    box-shadow: 0 8px 20px rgba(43, 108, 176, 0.3) !important;
+}
+
+.login-footer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.login-footer a {
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-light);
+    transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+    color: var(--primary-blue);
+}
+
+@media (max-width: 500px) {
+    .login-container {
+        width: 100%;
+        margin: 1rem;
+        padding: 2.5rem 1.5rem;
+    }
+}

@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
 import { 
     collection, 
     query, 
@@ -9,20 +9,16 @@ import {
     addDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-let currentUser = null;
+const buyerId = localStorage.getItem('buyerId');
 
 // -- 1. Authentication Guard --
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        currentUser = user;
-        initOrders();
-    } else {
-        // UI Preview Mode
-        initOrders();
-    }
-});
+if (buyerId) {
+    initOrders();
+} else {
+    // UI Preview Mode
+    initOrders();
+}
 
 function initOrders() {
     // If we're on the list page
@@ -40,11 +36,11 @@ function initOrders() {
 
 // -- 2. Load Orders Table --
 function loadOrdersList() {
-    if (!currentUser) return console.log("Guest mode order list.");
+    if (!buyerId) return console.log("Guest mode order list.");
 
     const q = query(
         collection(db, "buyer_orders"), 
-        where("buyerId", "==", currentUser.uid)
+        where("buyerId", "==", buyerId)
     );
 
     onSnapshot(q, (snapshot) => {
@@ -89,7 +85,7 @@ function loadOrdersList() {
 
 // -- 3. Load Specific Order Details --
 async function loadOrderDetails(orderId) {
-    if (!currentUser) return console.log("Guest mode order details.");
+    if (!buyerId) return console.log("Guest mode order details.");
 
     try {
         const docRef = doc(db, "buyer_orders", orderId);
@@ -133,7 +129,7 @@ if (refundForm) {
 
         try {
             await addDoc(collection(db, "refund_requests"), {
-                buyerId: currentUser.uid,
+                buyerId: buyerId,
                 orderId: orderId,
                 reason: reason,
                 status: "pending", // Refund request starts as red (pending)
@@ -152,13 +148,3 @@ if (refundForm) {
 window.downloadInvoice = () => {
     alert("Downloading PDF Invoice... (Feature is currently in development)");
 };
-
-// Logout logic
-const logoutBtn = document.getElementById("logout-btn");
-if (logoutBtn) {
-    logoutBtn.onclick = () => {
-        signOut(auth).then(() => {
-            window.location.href = "login.html";
-        });
-    };
-}

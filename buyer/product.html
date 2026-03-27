@@ -132,7 +132,7 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <button class="btn btn-large btn-buy" onclick="window.location.href='checkout.html'">
+                <button class="btn btn-large btn-buy" onclick="addToCartFromPage()">
                     <i class="fa-solid fa-cart-plus"></i> Add to Cart
                 </button>
                 <button class="btn btn-large btn-negotiate" onclick="openNegotiationModal()">
@@ -163,14 +163,14 @@
             
             <div id="modalInitial">
                 <h2 class="modal-title">Make an Offer</h2>
-                <p style="color:var(--text-light); font-size: 0.9rem;">The current price is ₹45/kg. What is your offer?</p>
+                <p style="color:var(--text-light); font-size: 0.9rem;" id="modal-offer-text">The current price is ₹45/kg. What is your offer?</p>
                 
                 <div class="negotiation-form">
                     <div class="negotiation-input-group">
                         <span>₹</span>
                         <input type="number" id="offeredPrice" placeholder="0.00" value="40">
                     </div>
-                    <button class="btn btn-large btn-buy" style="width:100%;" onclick="sendNegotiationRequest()">
+                    <button id="send-neg-btn" class="btn btn-large btn-buy" style="width:100%;" onclick="sendNegotiationRequest()">
                         <i class="fa-solid fa-paper-plane"></i> Send Request
                     </button>
                 </div>
@@ -179,7 +179,7 @@
             <div id="modalSuccess" class="success-message">
                 <i class="fa-solid fa-circle-check tick-mark"></i>
                 <h2 class="modal-title">Request Sent!</h2>
-                <p style="color:var(--text-light);">Farmer Ram Singh will review your offer and notify you shortly.</p>
+                <p style="color:var(--text-light);">The farmer will review your offer and notify you shortly.</p>
                 <button class="btn btn-large btn-negotiate" style="width:100%; margin-top: 30px;" onclick="closeNegotiationModal()">
                     Back to Product
                 </button>
@@ -188,6 +188,7 @@
     </div>
 
     <!-- Scripts -->
+    <script type="module" src="auth.js"></script>
     <script type="module" src="product-detail.js"></script>
     <script>
         function openNegotiationModal() {
@@ -198,18 +199,7 @@
 
         function closeNegotiationModal() {
             document.getElementById('negotiationModal').style.display = 'none';
-        }
-
-        function sendNegotiationRequest() {
-            const price = document.getElementById('offeredPrice').value;
-            if(!price || price <= 0) {
-                alert("Please enter a valid offer price.");
-                return;
-            }
-            
-            // Transition to success animation
-            document.getElementById('modalInitial').style.display = 'none';
-            document.getElementById('modalSuccess').style.display = 'block';
+            document.getElementById('send-neg-btn').disabled = false;
         }
     </script>
 </body>

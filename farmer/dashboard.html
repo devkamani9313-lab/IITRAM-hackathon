@@ -93,7 +93,7 @@
         <div class="modal-window">
             <div class="modal-top">
                 <h2>List Fresh Produce</h2>
-                <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+                <button class="close-modal-btn" id="closeModalBtn" onclick="document.getElementById('modalOverlay').classList.remove('active')">&times;</button>
             </div>
 
             <form id="addProduceForm" class="modal-form">
@@ -138,6 +138,39 @@
 
                 <div class="form-footer">
                     <button type="submit" class="btn btn-primary btn-full">Post to Marketplace 🚀</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-dimmer" id="editModalOverlay">
+        <div class="modal-window">
+            <div class="modal-top">
+                <h2>Edit Crop Details</h2>
+                <button class="close-modal-btn" onclick="document.getElementById('editModalOverlay').classList.remove('active')">&times;</button>
+            </div>
+
+            <form id="editProduceForm" class="modal-form">
+                <input type="hidden" id="editProdId">
+                <p style="color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem;">Updating details for: <strong style="color: var(--text-dark);" id="editProdNameDisplay">Crop Name</strong></p>
+
+                <div class="input-grid">
+                    <div class="input-block">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="editProdQty" placeholder="100" required>
+                    </div>
+                    <div class="input-block">
+                        <label>Asking Price (per unit)</label>
+                        <div class="price-input-bar">
+                            <span>₹</span>
+                            <input type="number" id="editProdPrice" placeholder="50" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn btn-primary btn-full" style="background: var(--farm-green);">Save Changes</button>
                 </div>
             </form>
         </div>

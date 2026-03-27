@@ -1,4 +1,5 @@
-import { db, collection, addDoc, getDocs, query, where, doc, getDoc } from "./firebase-config.js";
+import { db } from "./firebase-config.js";
+import { collection, addDoc, getDocs, query, where, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // Handle Registration
 const registerForm = document.getElementById('register-form');
@@ -100,34 +101,36 @@ if (loginForm) {
     });
 }
 
+// Global Event Delegation & Explicit Window Handler for Logout
+window.logoutBuyer = () => {
+    if (confirm("Log out of FarmConnect?")) {
+        localStorage.removeItem('buyerId');
+        localStorage.removeItem('buyerName');
+        window.location.href = "login.html";
+    }
+};
+
+document.body.addEventListener('click', (e) => {
+    if (e.target.id === 'logout-btn' || e.target.classList.contains('nav-logout')) {
+        e.preventDefault();
+        window.logoutBuyer();
+    }
+});
+
 // Logic to show/hide profile on the nav
 document.addEventListener('DOMContentLoaded', () => {
     const buyerId = localStorage.getItem('buyerId');
     const loginNavBtn = document.getElementById('login-nav-btn');
     const profileArea = document.getElementById('profile-area');
-    const authContainer = document.getElementById('auth-container');
 
     if (buyerId) {
         if (loginNavBtn) loginNavBtn.style.display = 'none';
         if (profileArea) profileArea.style.display = 'flex';
-        
-        // Handle Logout
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.onclick = (e) => {
-                e.preventDefault();
-                if (confirm("Log out of FarmConnect?")) {
-                    localStorage.removeItem('buyerId');
-                    localStorage.removeItem('buyerName');
-                    window.location.href = "login.html";
-                }
-            };
-        }
     } else {
         if (loginNavBtn) loginNavBtn.style.display = 'block';
         if (profileArea) profileArea.style.display = 'none';
         
-        // Redirect if trying to view orders without login
+        // Redirect if trying to view restricted pages without login
         if (window.location.pathname.includes("orders.html") || window.location.pathname.includes("checkout.html")) {
             alert("Please login as a Buyer first.");
             window.location.href = "login.html";

@@ -355,3 +355,45 @@ p {
   background: #fee2e2;
   border-color: #fecaca;
 }
+/* --- Sustainability & Eco-Impact Styles --- */
+.eco-impact-card {
+    background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.eco-impact-card h2, .eco-impact-card p {
+    color: white !important;
+}
+
+.eco-impact-card::after {
+    content: "🌱";
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    font-size: 4rem;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+}
+
+.impact-badge-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 3s infinite ease-in-out;
+}
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(0.98); }
+}

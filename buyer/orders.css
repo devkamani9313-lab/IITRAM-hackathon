@@ -38,8 +38,8 @@
 /* Stats Dashboard */
 .order-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 4rem;
 }
 
@@ -584,4 +584,48 @@ body.pdf-printing .total-val {
 body.pdf-printing .badge-seal-startup {
   border: 1px solid #3b82f6 !important;
   background: white !important;
+}
+/* --- Sustainability & Eco-Impact Styles --- */
+.eco-impact-card {
+    background: linear-gradient(135deg, #065f46 0%, #047857 100%) !important;
+    border: none !important;
+    color: white !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.eco-impact-card h2, .eco-impact-card p {
+    color: white !important;
+}
+
+.eco-impact-card::after {
+    content: "🌱";
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    font-size: 3.5rem;
+    opacity: 0.15;
+    transform: rotate(-15deg);
+}
+
+.impact-badge-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-top: 10px;
+    color: white;
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 3s infinite ease-in-out;
+}
+
+@keyframes pulse-slow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(0.98); }
 }

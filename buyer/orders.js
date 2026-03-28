@@ -73,53 +73,68 @@ function renderOrders(orders) {
     if (!list) return;
     
     list.innerHTML = "";
-    let stats = { total: 0, delivered: 0, pending: 0 };
+    let stats = { total: 0, delivered: 0, pending: 0, impact: 0 };
     
     orders.forEach((data) => {
         const id = data.id;
         stats.total++;
-        if (data.status === 'delivered' || data.status === 'approved') stats.delivered++;
-        else if (data.status === 'pending') stats.pending++;
+        
+        const status = data.status || 'pending';
+        const isDelivered = (status === 'delivered' || status === 'approved');
+        
+        if (isDelivered) {
+            stats.delivered++;
+            // Calculate impact: Assume each order represents approx 5kg of local instead of global (0.5kg/kg CO2 saved)
+            const qty = parseInt(data.quantity) || 5; 
+            stats.impact += (qty * 0.5);
+        } else if (status === 'pending') {
+            stats.pending++;
+        }
 
-            const row = document.createElement("div");
-            row.className = "order-row animate-fade";
-            row.onclick = () => window.location.href = `order-details.html?id=${id}`;
-            
-            let statusClass = 'pending';
-            let statusText = 'Pending';
-            const status = data.status || 'pending';
+        const row = document.createElement("div");
+        row.className = "order-row animate-fade";
+        row.onclick = () => window.location.href = `order-details.html?id=${id}`;
+        
+        let statusClass = 'pending';
+        let statusText = 'Pending';
 
-            if (status === 'refunded') {
-                statusClass = 'archived'; 
-                statusText = 'REFUNDED';
-            } else if (status === 'delivered' || status === 'approved') {
-                statusClass = 'approved';
-                statusText = 'Delivered';
-            }
+        if (status === 'refunded') {
+            statusClass = 'archived'; 
+            statusText = 'REFUNDED';
+        } else if (isDelivered) {
+            statusClass = 'approved';
+            statusText = 'Delivered';
+        }
 
-            const displayId = id.substring(0, 8).toUpperCase();
-            const displayDate = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Today';
+        const displayId = id.substring(0, 8).toUpperCase();
+        const displayDate = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Today';
 
-            row.innerHTML = `
-                <div class="order-id">#${displayId}</div>
-                <div class="product-name">${data.productName || 'Produce'}</div>
-                <div class="farmer-name">${data.farmerName || 'Farmer'}</div>
-                <div class="amount">₹${data.totalAmount || '0'}</div>
-                <div class="status-cell">
-                    <span class="status-badge ${statusClass}">${statusText}</span>
-                </div>
-                <div class="order-date">${displayDate}</div>
-                <div class="action-cell">
-                    <button class="btn-text">View Details</button>
-                </div>
-            `;
-            list.appendChild(row);
-        });
+        row.innerHTML = `
+            <div class="order-id">#${displayId}</div>
+            <div class="product-name">${data.productName || 'Produce'}</div>
+            <div class="farmer-name">${data.farmerName || 'Farmer'}</div>
+            <div class="amount">₹${data.totalAmount || '0'}</div>
+            <div class="status-cell">
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </div>
+            <div class="order-date">${displayDate}</div>
+            <div class="action-cell">
+                <button class="btn-text">View Details</button>
+            </div>
+        `;
+        list.appendChild(row);
+    });
 
-        // Update stats
-        document.getElementById("stat-total").innerText = stats.total;
-        document.getElementById("stat-delivered").innerText = stats.delivered;
-        document.getElementById("stat-pending").innerText = stats.pending;
+    // Update stats
+    const totalEl = document.getElementById("stat-total");
+    const delEl = document.getElementById("stat-delivered");
+    const pendEl = document.getElementById("stat-pending");
+    const impactEl = document.getElementById("stat-impact");
+
+    if (totalEl) totalEl.innerText = stats.total;
+    if (delEl) delEl.innerText = stats.delivered;
+    if (pendEl) pendEl.innerText = stats.pending;
+    if (impactEl) impactEl.innerText = `${stats.impact.toFixed(1)} kg`;
 }
 
 // -- 3. Load Specific Order Details --

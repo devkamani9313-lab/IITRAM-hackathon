@@ -5,6 +5,7 @@ import { db, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, upda
 let deliveredCount = 0;
 let refundAcceptedCount = 0;
 
+// -- Core UI Helpers (Required for Inline HTML Handlers) --
 window.openFarmerModal = () => {
     const modal = document.getElementById('modalOverlay');
     if (modal) {
@@ -17,18 +18,16 @@ window.openFarmerModal = () => {
 window.confirmFarmerLogout = () => {
     if (confirm("Log out of FarmConnect?")) {
         localStorage.clear();
-        window.location.href = "../index.html"; // Redirect to Role Select
+        window.location.href = "../index.html"; 
     }
 };
 
-// -- Edit and Delete Global Helpers --
 window.deleteCrop = async (id, name) => {
-    if (confirm(`Are you sure you want to delete ${name}? This action cannot be undone.`)) {
+    if (confirm(`Are you sure you want to delete ${name}?`)) {
         try {
             await deleteDoc(doc(db, "products", id));
         } catch (e) {
-            console.error("Error deleting crop", e);
-            alert("Failed to delete the crop. Please try again.");
+            alert("Failed to delete the crop.");
         }
     }
 };
@@ -44,7 +43,6 @@ window.openEditModal = (id, name, qty, price) => {
     }
 };
 
-// Helper to get relevant Unsplash images based on crop name
 function getCropImage(name) {
     const crop = (name || "").toLowerCase();
     const images = {
@@ -58,11 +56,7 @@ function getCropImage(name) {
         banana: "https://images.unsplash.com/photo-1571771894821-ad9b58a33646?auto=format&fit=crop&q=80&w=400",
         apple: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=400"
     };
-
-    for (let key in images) {
-        if (crop.includes(key)) return images[key];
-    }
-    // Fallback to a general organic farm image
+    for (let key in images) { if (crop.includes(key)) return images[key]; }
     return "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=400";
 }
 
@@ -79,6 +73,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const displayFarmName = document.getElementById('displayFarmName');
     if (displayFarmName) displayFarmName.textContent = farmName;
+
+    // Trigger Weather Forecast
+    fetchWeather(farmerLoc);
 
     // 2. Form Submission (Listing Crops)
     const addProduceForm = document.getElementById('addProduceForm');
@@ -431,3 +428,25 @@ window.updateStatus = async (id, status) => {
         alert("Failed to update status. Please try again.");
     }
 };
+
+// -- Utility Logic: Simulated Weather API --
+async function fetchWeather(location) {
+    const tempEl = document.getElementById('currentTemp');
+    const descEl = document.getElementById('weatherDesc');
+    if (!tempEl || !descEl) return;
+
+    // Simulation delay for "realism" during demo
+    setTimeout(() => {
+        const city = (location || "Nashik").split(',')[0].trim();
+        const mockData = {
+            "Nashik": { temp: 28, desc: "Partly Cloudy • Ideal for Grape Harvest" },
+            "Mumbai": { temp: 31, desc: "Sunny • High Humidity" },
+            "Nagpur": { temp: 34, desc: "Hot & Clear • Water crops tonight" },
+            "Pune": { temp: 26, desc: "Clear Skies • Best for leafy greens" }
+        };
+
+        const weather = mockData[city] || { temp: 30, desc: "Sunny • Great Harvest conditions" };
+        tempEl.textContent = `${weather.temp}°C`;
+        descEl.textContent = weather.desc;
+    }, 1200);
+}

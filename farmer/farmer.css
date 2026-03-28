@@ -72,6 +72,43 @@
     z-index: 1000;
 }
 
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* Time Toggle Group */
+.chart-toggle-group {
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 10px;
+    display: flex;
+    gap: 4px;
+}
+
+.toggle-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-btn:hover {
+    color: var(--text-main);
+}
+
+.toggle-btn.active {
+    background: white;
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-sm);
+}
+
 .header-inner {
     display: flex;
     justify-content: space-between;

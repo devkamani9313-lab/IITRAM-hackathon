@@ -6,6 +6,7 @@
     <title>Farmer Dashboard - FarmConnect</title>
     <link rel="stylesheet" href="../assets/global.css">
     <link rel="stylesheet" href="farmer.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="dashboard-body">
 
@@ -60,6 +61,28 @@
                         <span class="tile-value" id="currentTemp">...</span>
                         <p id="weatherDesc" style="font-size: 0.8rem; margin-top: 5px;">Pinpointing your farm...</p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Analytics Section -->
+        <section class="analytics-section container animate-fade" style="margin-bottom: 5rem;">
+            <div class="analytics-card">
+                <div class="analytics-header">
+                    <div>
+                        <h2 style="font-size: 1.6rem; color: var(--text-main);">Rolling 7-Day Revenue Trends 📈</h2>
+                        <p style="color: var(--text-muted); font-size: 0.95rem;">Visual growth reflecting your successful harvests and market traction.</p>
+                    </div>
+                    <div class="analytics-meta">
+                        <div class="chart-toggle-group">
+                            <button class="toggle-btn active" id="filter-daily" onclick="changeChartFilter('daily')">Daily</button>
+                            <button class="toggle-btn" id="filter-weekly" onclick="changeChartFilter('weekly')">Weekly</button>
+                            <button class="toggle-btn" id="filter-monthly" onclick="changeChartFilter('monthly')">Monthly</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container" style="position: relative; height: 350px; width: 100%; margin-top: 2rem;">
+                    <canvas id="salesChart"></canvas>
                 </div>
             </div>
         </section>

@@ -4,6 +4,9 @@ import { db, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, upda
 // Health Score Metrics (State)
 let deliveredCount = 0;
 let refundAcceptedCount = 0;
+let salesChart = null; // High-level analytics instance
+let currentChartFilter = 'daily'; // Default view
+let lastOrdersData = []; // Cache for instant switching
 
 // -- Core UI Helpers (Required for Inline HTML Handlers) --
 window.openFarmerModal = () => {
@@ -221,11 +224,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <p>No sales history yet. Your paid orders will appear here automatically.</p>
                 </div>`;
             if (activeOrdersCount) activeOrdersCount.textContent = "0";
+            // Update chart with zeros
+            lastOrdersData = [];
+            updateSalesChart([]);
             return;
         }
 
         list.innerHTML = '';
         let totalCount = 0;
+        lastOrdersData = snapshot.docs.map(d => d.data());
         
         snapshot.forEach((docSnap) => {
             const order = docSnap.data();
@@ -267,6 +274,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (activeOrdersCount) activeOrdersCount.textContent = totalCount;
         
+        // Update Chart with fresh data
+        updateSalesChart(lastOrdersData);
+
         // Count officially delivered orders for health score
         deliveredCount = snapshot.docs.filter(d => d.data().status === 'delivered').length;
         updateHealthScore();
@@ -449,4 +459,125 @@ async function fetchWeather(location) {
         tempEl.textContent = `${weather.temp}°C`;
         descEl.textContent = weather.desc;
     }, 1200);
+}
+
+// -- BI Logic: Multi-Scale Sales Analytics --
+window.changeChartFilter = (filter) => {
+    currentChartFilter = filter;
+    
+    // Update UI Toggles
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById(`filter-${filter}`);
+    if (activeBtn) activeBtn.classList.add('active');
+    
+    // Refresh with current data
+    console.log(`Switching chart to ${filter} view...`);
+    updateSalesChart(lastOrdersData);
+};
+
+function updateSalesChart(orders) {
+    const ctx = document.getElementById('salesChart');
+    if (!ctx || typeof Chart === 'undefined') return;
+
+    const labels = [];
+    const dataPoints = {};
+    const now = new Date();
+
+    // 1. Initialize Time Buckets
+    if (currentChartFilter === 'daily') {
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(now.getDate() - i);
+            const str = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            labels.push(str);
+            dataPoints[str] = 0;
+        }
+    } else if (currentChartFilter === 'weekly') {
+        for (let i = 3; i >= 0; i--) {
+            const start = new Date();
+            start.setDate(now.getDate() - ((i + 1) * 7 - 1));
+            const end = new Date();
+            end.setDate(now.getDate() - (i * 7));
+            
+            const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { day: 'numeric' })}`;
+            labels.push(label);
+            dataPoints[label] = 0;
+        }
+    } else if (currentChartFilter === 'monthly') {
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(now.getMonth() - i);
+            const str = d.toLocaleDateString('en-US', { month: 'short' });
+            labels.push(str);
+            dataPoints[str] = 0;
+        }
+    }
+
+    // 2. Aggregate Revenue (Orders -> Buckets)
+    orders.forEach(order => {
+        const status = order.status || 'pending';
+        if ((status === 'delivered' || status === 'approved') && order.createdAt) {
+            const date = order.createdAt.toDate();
+            let bucket = null;
+
+            if (currentChartFilter === 'daily') {
+                bucket = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            } else if (currentChartFilter === 'weekly') {
+                const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+                const weekIdx = Math.floor(diff / 7);
+                if (weekIdx >= 0 && weekIdx <= 3) bucket = labels[3 - weekIdx];
+            } else if (currentChartFilter === 'monthly') {
+                bucket = date.toLocaleDateString('en-US', { month: 'short' });
+            }
+
+            if (bucket && dataPoints.hasOwnProperty(bucket)) {
+                dataPoints[bucket] += parseFloat(order.totalAmount || 0);
+            }
+        }
+    });
+
+    const values = labels.map(l => dataPoints[l]);
+
+    // 3. Render / Update Instance
+    if (salesChart) {
+        salesChart.data.labels = labels;
+        salesChart.data.datasets[0].data = values;
+        salesChart.update();
+    } else {
+        salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                    data: values,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#10b981',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        callbacks: { label: (c) => ` Total Revenue: ₹${c.parsed.y.toLocaleString()}` }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { weight: '600' } } },
+                    y: { beginAtZero: true, grid: { borderDash: [5, 5] }, ticks: { callback: (v) => '₹' + v } }
+                }
+            }
+        });
+    }
 }

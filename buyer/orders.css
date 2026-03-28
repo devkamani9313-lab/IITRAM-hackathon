@@ -197,3 +197,300 @@
     padding: 2rem 1rem;
   }
 }
+
+/* =========================================
+   ORDER DETAILS: CLEAN & ALIGNED
+   ========================================= */
+
+.details-header {
+  margin-bottom: 3rem;
+}
+
+.back-link {
+  display: inline-flex;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--secondary);
+  font-size: 0.9rem;
+  transition: transform 0.2s;
+}
+
+.back-link:hover { transform: translateX(-5px); }
+
+.details-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.details-topline h1 {
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--text-main);
+}
+
+/* Info Grid Styling */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+}
+
+.info-block {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.info-block h3 {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  margin-bottom: 1.25rem;
+}
+
+.info-block p {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+
+/* Invoice Card Styling */
+/* =========================================
+   STARTUP-GRADE INVOICE COMPONENT
+   ========================================= */
+
+.invoice-box {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  padding: 4rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+  margin-bottom: 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4rem;
+}
+
+.header-left h2 {
+  font-size: 1.75rem;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.badge-seal-startup {
+  padding: 6px 12px;
+  background: #f0f7ff;
+  color: #3b82f6;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  border-radius: 6px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.btn-lift {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  color: var(--text-main);
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  border-color: var(--secondary-light);
+}
+
+.premium-invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.premium-invoice-table th {
+  text-align: left;
+  padding: 1.5rem 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid var(--bg-main);
+}
+
+.premium-invoice-table td {
+  padding: 2.25rem 0;
+  border-bottom: 1px solid var(--bg-main);
+}
+
+.invoice-totals-wrapper {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 4rem;
+  align-items: flex-end;
+}
+
+.seal-area {
+  padding-bottom: 1rem;
+}
+
+.verified-text {
+  color: #10b981;
+  font-weight: 800;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.timestamp-text {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.totals-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.total-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4rem;
+}
+
+.total-row .lbl {
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: right;
+  flex: 1;
+}
+
+.total-row .val {
+  color: var(--text-main);
+  font-weight: 900;
+  font-size: 1.1rem;
+  width: 140px;
+  text-align: right;
+}
+
+.grand-total-row {
+  margin-top: 1.5rem;
+  background: #f8fafc;
+  padding: 2rem 2.5rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.total-info .total-lbl {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 950;
+  color: var(--secondary);
+}
+
+.total-info .total-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.total-val {
+  font-size: 2.25rem;
+  font-weight: 1000;
+  color: var(--secondary);
+  letter-spacing: -0.02em;
+}
+
+.invoice-bottom-msg {
+  margin-top: 5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--bg-main);
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+  .invoice-totals-wrapper {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .invoice-box { padding: 2.5rem; }
+}
+
+/* Refund Section Styling */
+.refund-section {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  padding: 2.5rem;
+}
+
+.refund-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.refund-text h3 { font-size: 1.25rem; font-weight: 900; margin-bottom: 0.5rem; }
+.refund-text p { color: var(--text-muted); font-size: 0.95rem; }
+
+.btn-refund {
+  background: #fff5f5;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.btn-refund:hover { background: #fee2e2; transform: translateY(-2px); }
+
+.refund-form {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+@media (max-width: 900px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .refund-card { flex-direction: column; text-align: center; }
+  .invoice-card { padding: 1.5rem; }
+  .invoice-table { font-size: 0.9rem; }
+}

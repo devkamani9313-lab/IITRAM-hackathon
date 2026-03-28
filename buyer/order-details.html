@@ -54,38 +54,64 @@
         </section>
 
         <!-- Invoice Card -->
-        <section class="invoice-card">
+        <section class="invoice-box animate-fade">
             <div class="invoice-header">
-                <h2>Invoice Summary</h2>
-                <button class="btn-outline" onclick="downloadInvoice()">Download PDF Invoice</button>
+                <div class="header-left">
+                    <h2>Invoice Summary</h2>
+                    <span class="badge-seal-startup">OFFICIAL TRANSACTION RECORD</span>
+                </div>
+                <button class="btn-lift" onclick="downloadInvoice()">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF Invoice
+                </button>
             </div>
-            <table class="invoice-table">
+
+            <table class="premium-invoice-table">
                 <thead>
                     <tr>
-                        <th>Item Description</th>
-                        <th style="text-align: center;">Qty</th>
-                        <th style="text-align: right;">Unit Price</th>
-                        <th style="text-align: right;">Total</th>
+                        <th>ITEM DESCRIPTION</th>
+                        <th class="text-center">QUANTITY</th>
+                        <th class="text-right">UNIT RATE</th>
+                        <th class="text-right">SUBTOTAL</th>
                     </tr>
                 </thead>
                 <tbody id="invoice-items">
-                    <tr>
-                        <td>
-                            <div style="font-weight: 700;">Organic Tomatoes (A-Grade)</div>
-                            <div style="font-size: 0.8rem; color: var(--text-light);">Direct from harvest, Nasik branch.</div>
-                        </td>
-                        <td style="text-align: center;">50 kg</td>
-                        <td style="text-align: right;">₹50/kg</td>
-                        <td style="text-align: right; font-weight: 700;">₹2,500</td>
-                    </tr>
+                    <!-- Dynamic Items -->
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="3" style="text-align: right; border-bottom: none;">Grand Total</th>
-                        <th style="text-align: right; border-bottom: none;">₹2,500</th>
-                    </tr>
-                </tfoot>
             </table>
+
+            <!-- Hyper-Aligned Totals Section -->
+            <div class="invoice-totals-wrapper">
+                <div class="seal-area">
+                    <p class="verified-text"><i class="fa-solid fa-circle-check"></i> Payment Verified by FarmConnect Trust</p>
+                    <p class="timestamp-text">Processed on Mar 28, 2026 • 10:42 AM IST</p>
+                </div>
+                
+                <div class="totals-grid">
+                    <div class="total-row">
+                        <span class="lbl">Net Harvest Amount</span>
+                        <span class="val" id="net-amount-val">₹0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="lbl">Platform Service Fee (1%)</span>
+                        <span class="val" id="tax-fee-val">₹0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="lbl">Logistics & Handling</span>
+                        <span class="val" id="delivery-fee-val">₹50.00</span>
+                    </div>
+                    <div class="grand-total-row">
+                        <div class="total-info">
+                            <span class="total-lbl">Grand Total Payable</span>
+                            <span class="total-sub">Inclusive of all duties and insurance</span>
+                        </div>
+                        <span class="total-val" id="total-amount-val">₹0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="invoice-bottom-msg">
+                <p>❤️ Thank you for empowering local agriculture in Maharashtra.</p>
+            </div>
         </section>
 
         <!-- Dynamic Actions: Refund Section -->

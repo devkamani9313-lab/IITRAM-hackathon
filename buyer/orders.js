@@ -120,23 +120,59 @@ async function loadOrderDetails(orderId) {
 
         if (docSnap.exists()) {
             const data = docSnap.data();
-            
-            // Set text content
+            const total = parseFloat(data.totalAmount) || 0;
+            const tax = total * 0.01;
+            const delivery = 50; 
+            const grandTotal = total + tax + delivery;
+
+            // Header & Status
             document.getElementById("order-id-display").innerText = `Order #${orderId.substring(0, 8).toUpperCase()}`;
             document.getElementById("farmer-name").innerText = data.farmerName || "Farmer";
             
             const statusBadge = document.getElementById("status-display");
             const isDelivered = (data.status === 'delivered' || data.status === 'approved');
-            
             statusBadge.className = `status-badge ${isDelivered ? 'approved' : 'pending'}`;
             statusBadge.innerText = isDelivered ? 'Delivered' : 'Pending';
 
-            // Check Visibility of Refund Section (Only for Delivered)
+            // Premium Table Rows
+            const invoiceItems = document.getElementById("invoice-items");
+            if (invoiceItems) {
+                invoiceItems.innerHTML = `
+                <tr>
+                    <td>
+                        <div style="font-weight: 800; font-size: 1.15rem; color: var(--text-main); letter-spacing: -0.01em;">${data.productName || 'Fresh Harvest'}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 6px;">Certified A-Grade Selection</div>
+                    </td>
+                    <td class="text-center" style="font-weight: 800; color: var(--text-main);">${data.quantity || '1'} Units</td>
+                    <td class="text-right" style="font-weight: 700; color: var(--text-muted);">₹${(total / (data.quantity || 1)).toFixed(2)}</td>
+                    <td class="text-right" style="font-weight: 900; color: var(--primary); font-size: 1.1rem;">₹${total.toFixed(2)}</td>
+                </tr>
+                `;
+            }
+
+            // Hyper-Aligned Grid injection
+            const netVal = document.getElementById("net-amount-val");
+            const taxVal = document.getElementById("tax-fee-val");
+            const delVal = document.getElementById("delivery-fee-val");
+            const totalVal = document.getElementById("total-amount-val");
+
+            if (netVal) netVal.innerText = `₹${total.toFixed(2)}`;
+            if (taxVal) taxVal.innerText = `₹${tax.toFixed(2)}`;
+            if (delVal) delVal.innerText = `₹${delivery.toFixed(2)}`;
+            if (totalVal) totalVal.innerText = `₹${grandTotal.toFixed(2)}`;
+
+            // Dynamic Seal Timestamp
+            const timestampEl = document.querySelector(".timestamp-text");
+            if (timestampEl && data.createdAt) {
+                const date = data.createdAt.toDate();
+                timestampEl.innerText = `Processed on ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • ${date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} IST`;
+            }
+
+            // Refund Section Visibility
             const refundSection = document.getElementById("refund-section");
             if (refundSection) {
                 refundSection.style.display = isDelivered ? 'block' : 'none';
             }
-
         }
     } catch (e) {
         console.error("Error loading order details:", e);

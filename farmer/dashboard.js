@@ -229,27 +229,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         snapshot.forEach((docSnap) => {
             const order = docSnap.data();
+            const orderId = docSnap.id;
             totalCount++;
             
             const row = document.createElement('div');
             row.className = 'order-row-item';
             row.style.display = 'grid';
-            row.style.gridTemplateColumns = '1.5fr 1fr 2fr 1fr 1fr';
+            row.style.gridTemplateColumns = '1.2fr 0.8fr 1.5fr 1fr 1fr 1fr';
             row.style.alignItems = 'center';
-            row.style.padding = '1rem 1.5rem';
-            row.style.gap = '1rem';
+            row.style.padding = '1.25rem 2rem';
+            row.style.gap = '1.5rem';
             
             const dateStr = order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString() : 'Just now';
+            const status = order.status || 'pending';
+            const isDelivered = status === 'delivered';
             
             row.innerHTML = `
                 <div class="o-detail"><span class="o-label">Buyer</span><span class="o-value">${order.buyerName || 'Client'}</span></div>
                 <div class="o-detail"><span class="o-label">Date</span><span class="o-value">${dateStr}</span></div>
                 <div class="o-detail"><span class="o-label">Items</span><span class="o-value" style="font-weight:800;">${order.productName}</span></div>
-                <div class="o-detail"><span class="o-label">Amount</span><span class="o-value" style="color: var(--primary); font-weight: 900; font-size:1.1rem;">₹${order.totalAmount}</span></div>
+                <div class="o-detail"><span class="o-label">Amount</span><span class="o-value" style="color: var(--primary); font-weight: 900;">₹${order.totalAmount}</span></div>
+                <div class="o-detail">
+                    <span class="o-label">Logistics</span>
+                    <span class="status-tag ${isDelivered ? 'delivered' : 'pending'}">${status.toUpperCase()}</span>
+                </div>
                 <div class="o-detail" style="text-align: right;">
-                    ${order.paymentMethod === 'Cash on Delivery' 
-                        ? `<span style="background:#fff7ed; color:#c2410c; padding: 6px 14px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; border: 1px solid #fdba74;">COD 🚚</span>`
-                        : `<span style="background:#ecfdf5; color:#059669; padding: 6px 14px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; border: 1px solid #6ee7b7;">PAID ✅</span>`
+                    ${!isDelivered 
+                        ? `<button class="btn-fulfill" onclick="updateOrderStatus('${orderId}', 'delivered')">
+                            <i class="fa-solid fa-truck-fast"></i> Deliver
+                           </button>` 
+                        : `<span class="fulfillment-done"><i class="fa-solid fa-circle-check"></i> Fulfilled</span>`
                     }
                 </div>
             `;
@@ -258,7 +267,89 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (activeOrdersCount) activeOrdersCount.textContent = totalCount;
     });
+
+    // 6. Refund Request Listener
+    const qRefunds = query(collection(db, "refund_requests"), where("farmerId", "==", farmerId), where("status", "==", "pending"));
+    onSnapshot(qRefunds, (snapshot) => {
+        const section = document.getElementById('refundSection');
+        const list = document.getElementById('refundList');
+        if (!section || !list) return;
+
+        section.style.display = snapshot.empty ? 'none' : 'block';
+        list.innerHTML = '';
+
+        snapshot.forEach((docSnap) => {
+            const refund = docSnap.data();
+            const id = docSnap.id;
+            const row = document.createElement('div');
+            row.className = 'order-row-item';
+            row.style.background = '#fffafa'; // Subtle red tint
+            row.innerHTML = `
+                <div class="o-detail"><span class="o-label">Buyer</span><span class="o-value">${refund.buyerName}</span></div>
+                <div class="o-detail"><span class="o-label">Order</span><span class="o-value">...${refund.orderId.substring(refund.orderId.length - 6)}</span></div>
+                <div class="o-detail"><span class="o-label">Crop</span><span class="o-value">${refund.productName}</span></div>
+                <div class="o-detail" style="grid-column: span 2;">
+                    <span class="o-label">Reason</span>
+                    <span class="o-value" style="font-size: 0.85rem; font-style: italic;">"${refund.reason}"</span>
+                </div>
+                <div class="negotiation-actions">
+                    <button class="n-btn n-btn-accept" onclick="handleRefund('${id}', '${refund.orderId}', 'accepted')">
+                        <i class="fa-solid fa-check"></i> Approve
+                    </button>
+                    <button class="n-btn n-btn-reject" onclick="handleRefund('${id}', '${refund.orderId}', 'rejected')">
+                        <i class="fa-solid fa-xmark"></i> Reject
+                    </button>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+    });
 });
+
+// -- Global Helpers for Refunds --
+window.handleRefund = async (requestId, orderId, action) => {
+    try {
+        const confirmMsg = action === 'accepted' ? "Approve this refund? This will mark the order as REFUNDED for the buyer." : "Decline this refund request?";
+        if (!confirm(confirmMsg)) return;
+
+        // 1. Update Request Status
+        await updateDoc(doc(db, "refund_requests", requestId), {
+            status: action,
+            updatedAt: serverTimestamp()
+        });
+
+        // 2. Update Master Order Status ONLY if accepted
+        if (action === 'accepted') {
+            await updateDoc(doc(db, "buyer_orders", orderId), {
+                status: "refunded",
+                refundedAt: serverTimestamp()
+            });
+        }
+
+        console.log(`Refund ${requestId} handled with action: ${action}`);
+    } catch (e) {
+        console.error("Error handling refund:", e);
+        alert("Failed to process refund. Please try again.");
+    }
+};
+
+// -- Global Helpers for Fulfillment --
+window.updateOrderStatus = async (id, newStatus) => {
+    try {
+        if (!confirm(`Mark this order as ${newStatus.toUpperCase()}? This will update the buyer's dashboard live.`)) return;
+        
+        const { updateDoc, doc, serverTimestamp } = await import("../assets/firebase-config.js");
+        await updateDoc(doc(db, "buyer_orders", id), {
+            status: newStatus,
+            updatedAt: serverTimestamp()
+        });
+        
+        console.log(`Order ${id} updated to ${newStatus}`);
+    } catch (e) {
+        console.error("Error updating order status:", e);
+        alert("Failed to update order status. Please try again.");
+    }
+};
 
 // Update Status Global Helper
 window.updateStatus = async (id, status) => {

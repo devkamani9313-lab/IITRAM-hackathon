@@ -4,20 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - FarmConnect</title>
-    <link rel="stylesheet" href="../assets/global.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="orders.css">
+    <!-- Premium Assets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="../assets/global.css?v=99">
+    <link rel="stylesheet" href="dashboard.css?v=99">
+    <link rel="stylesheet" href="orders.css?v=99">
 </head>
 <body class="dashboard-body">
 
-    <!-- Navbar -->
+    <!-- Premium Navbar -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">🏬 Buyer Console</a>
-            <div class="nav-links">
-                <a href="index.html">Marketplace</a>
-                <a href="orders.html" class="active">My Orders</a>
-                <button id="logout-btn" class="nav-logout">Logout</button>
+        <div class="nav-container container">
+            <a href="index.html" class="logo">
+                🌾 <span>FarmConnect</span>
+            </a>
+
+            <div class="search-container animate-fade">
+                <input type="text" id="product-search" placeholder="Search your order history...">
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <div class="nav-actions">
+                <div class="nav-links">
+                    <a href="index.html">Marketplace</a>
+                    <a href="orders.html" class="active">My Orders</a>
+                </div>
+                
+                <div id="profile-area" class="profile-area">
+                    <div class="cart-icon" onclick="window.location.href='checkout.html'">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge" id="cartBadgeCount">0</span>
+                    </div>
+                    <button class="nav-logout" id="logout-btn">Logout</button>
+                </div>
             </div>
         </div>
     </nav>
@@ -27,8 +47,13 @@
         <div class="details-header">
             <a href="orders.html" class="back-link">← Back to List</a>
             <div class="details-topline">
-                <h1 id="order-id-display">Order #ORD-1042</h1>
-                <span id="status-display" class="status-badge approved">Delivered</span>
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <h1 id="order-id-display">Order #ORD-1042</h1>
+                    <span id="status-display" class="status-badge approved">Delivered</span>
+                </div>
+                <button class="btn-lift" onclick="downloadInvoice()">
+                    <i class="fa-solid fa-file-pdf"></i> Download PDF Invoice
+                </button>
             </div>
         </div>
 
@@ -60,9 +85,6 @@
                     <h2>Invoice Summary</h2>
                     <span class="badge-seal-startup">OFFICIAL TRANSACTION RECORD</span>
                 </div>
-                <button class="btn-lift" onclick="downloadInvoice()">
-                    <i class="fa-solid fa-file-pdf"></i> Download PDF Invoice
-                </button>
             </div>
 
             <table class="premium-invoice-table">
@@ -115,7 +137,7 @@
         </section>
 
         <!-- Dynamic Actions: Refund Section -->
-        <section id="refund-section" class="refund-section">
+        <section id="refund-section" class="refund-section" style="display:none;">
             <div class="refund-card">
                 <div class="refund-text">
                     <h3>Something wrong?</h3>
@@ -124,15 +146,33 @@
                 <button id="refund-btn" class="btn-refund" onclick="toggleRefundForm()">Request Refund / Returns</button>
             </div>
 
-            <!-- Hidden Refund Form -->
-            <form id="refund-form" class="refund-form" style="display:none;">
-                <h3 style="margin-bottom: 1rem;">Refund Request</h3>
-                <div class="input-group">
-                    <label style="font-weight: 600; font-size: 0.9rem;">Reason for Request</label>
-                    <textarea id="refund-reason" placeholder="Please describe the issue in detail (e.g., damaged items, incorrect quantity)..."></textarea>
+            <!-- Enhanced Refund Form -->
+            <form id="refund-form" class="refund-form animate-fade" style="display:none; margin-top: 1.5rem;">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.3rem;">🛡️ Submit Refund Request</h3>
+                <div class="input-group" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <label style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">Reason for Request</label>
+                    <textarea id="refund-reason" 
+                        placeholder="Please describe the issue in detail (e.g., damaged items, incorrect quantity)..."
+                        style="min-height: 120px; padding: 1rem; border-radius: 12px; border: 1px solid var(--border-subtle); outline: none; font-family: inherit;"
+                        required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem; background: var(--buyer-primary);">Submit Refund Application</button>
+                <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn-lift" id="submit-refund-btn" style="background: var(--buyer-primary); padding: 0.8rem 2rem;">
+                        Submit Application
+                    </button>
+                </div>
             </form>
+
+            <!-- Refund Status Display -->
+            <div id="refund-status-display" class="refund-status-card animate-fade" style="display:none; margin-top: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span class="status-indicator"></span>
+                    <div>
+                        <h4 id="refund-status-title">Refund Requested</h4>
+                        <p id="refund-status-desc" style="font-size: 0.85rem; color: var(--text-muted);"></p>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 

@@ -306,22 +306,22 @@
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  background: white;
-  color: var(--text-main);
+  background: #10b981;
+  color: white;
   padding: 0.85rem 1.75rem;
   border-radius: var(--radius-md);
   font-weight: 800;
   font-size: 0.9rem;
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  border: none;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-lift:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-  border-color: var(--secondary-light);
+  background: #059669;
+  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.4);
 }
 
 .premium-invoice-table {
@@ -488,9 +488,100 @@
   border-top: 1px dashed var(--border-subtle);
 }
 
+/* --- Refund Status & Functional Styles --- */
+.refund-status-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  margin-top: 1rem;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+}
+
+#refund-status-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.refund-form {
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-subtle);
+}
+
+.refund-form textarea {
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
+
+.refund-form textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
 @media (max-width: 900px) {
   .info-grid { grid-template-columns: 1fr; }
   .refund-card { flex-direction: column; text-align: center; }
   .invoice-card { padding: 1.5rem; }
   .invoice-table { font-size: 0.9rem; }
+}
+
+/* =========================================
+   PDF / PRINT OPTIMIZATION
+   ========================================= */
+@media print {
+  .navbar, .details-header .back-link, .refund-section, .btn-lift, #logout-btn {
+    display: none !important;
+  }
+  .invoice-box {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  body { background: white !important; }
+}
+
+/* Helper for html2pdf to hide the download button inside the PDF */
+.invoice-box .btn-lift {
+    display: none;
+}
+
+/* High-Contrast PDF Generation Mode */
+body.pdf-printing .invoice-box {
+  opacity: 1 !important;
+  animation: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+  background: white !important;
+  color: #000 !important;
+}
+
+body.pdf-printing .invoice-box * {
+  opacity: 1 !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+body.pdf-printing .val, 
+body.pdf-printing .total-val {
+  color: #000 !important;
+}
+
+body.pdf-printing .badge-seal-startup {
+  border: 1px solid #3b82f6 !important;
+  background: white !important;
 }

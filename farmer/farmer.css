@@ -386,3 +386,71 @@
 .n-btn-reject:active {
     transform: translateY(0);
 }
+
+/* =========================================
+   ORDER FULFILLMENT STYLES
+   ========================================= */
+
+.status-tag {
+    display: inline-flex;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    border: 1px solid transparent;
+}
+
+.status-tag.pending {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+.status-tag.delivered {
+    background: #ecfdf5;
+    color: #059669;
+    border-color: #6ee7b7;
+}
+
+.btn-fulfill {
+    background: white;
+    border: 1px solid var(--border-subtle);
+    padding: 8px 18px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.btn-fulfill:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(16, 185, 129, 0.2);
+}
+
+.btn-fulfill i {
+    color: var(--primary);
+    transition: color 0.2s;
+}
+
+.btn-fulfill:hover i {
+    color: white;
+}
+
+.fulfillment-done {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}

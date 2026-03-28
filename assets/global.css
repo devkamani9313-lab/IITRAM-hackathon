@@ -55,12 +55,24 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+  padding-top: var(--navbar-height); /* Ensure content starts below fixed navbar */
 }
 
 .container {
   max-width: 1240px;
   margin: 0 auto;
   width: 92%;
+}
+
+/* Force Icon Rendering */
+.fa-solid, .fas {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* Typography Hierarchy */
@@ -171,13 +183,16 @@ p {
 
 .navbar {
   height: var(--navbar-height);
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-subtle);
-  position: sticky;
+  background: white !important; /* Force solid background */
+  border-bottom: 2px solid var(--border-subtle);
+  position: fixed !important; /* Force to absolute top */
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100%;
+  z-index: 99999 !important; /* Highest possible priority */
   display: flex;
   align-items: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 .nav-container {
@@ -186,6 +201,7 @@ p {
   padding: 0 2rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 100%;
 }

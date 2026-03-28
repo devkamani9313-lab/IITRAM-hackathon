@@ -7,6 +7,11 @@
     <!-- Premium Assets -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Leaflet.js (Free Map Engine) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <link rel="stylesheet" href="../assets/global.css?v=99">
     <link rel="stylesheet" href="dashboard.css?v=99">
     <link rel="stylesheet" href="orders.css?v=99">
@@ -75,6 +80,33 @@
                 <p>Method: <strong>UPI / NetBanking</strong></p>
                 <p>Status: <strong style="color: var(--status-approved-text)">Paid</strong></p>
                 <p>Date: Mar 25, 2026</p>
+            </div>
+        </section>
+
+        <!-- Dynamic Sourcing Map (Restored) -->
+        <section class="map-section animate-fade" style="margin-bottom: 2.5rem; position: relative;">
+            <div style="margin-bottom: 1rem; padding-left: 0.5rem;">
+                <h3 style="font-size: 1.2rem; gap: 8px; display: flex; align-items: center; color: var(--text-main);">
+                    <i class="fa-solid fa-map-location-dot" style="color: var(--primary);"></i> 
+                    Farm-to-Table Journey
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Visualizing the supply chain impact of this harvest.</p>
+            </div>
+            
+            <div style="position: relative;">
+                <div id="sourcingMap" style="height: 380px; border-radius: 16px; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-md); z-index: 1;"></div>
+                
+                <!-- Floating Map Statistics (Glassmorphism) -->
+                <div class="map-stats-overlay">
+                    <div class="m-stat">
+                        <span class="m-lbl">Distance</span>
+                        <span class="m-val" id="map-dist">-- km</span>
+                    </div>
+                    <div class="m-stat">
+                        <span class="m-lbl">CO2 Saved</span>
+                        <span class="m-val" id="map-co2">-- kg</span>
+                    </div>
+                </div>
             </div>
         </section>
 

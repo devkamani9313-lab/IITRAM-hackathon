@@ -156,6 +156,13 @@ async function loadOrderDetails(orderId) {
             document.getElementById("order-id-display").innerText = `Order #${orderId.substring(0, 8).toUpperCase()}`;
             document.getElementById("farmer-name").innerText = data.farmerName || "Farmer";
             
+            document.getElementById("farmer-loc").innerText = `📍 ${data.location || 'Unknown'}`;
+            
+            // Trigger Dynamic Sourcing Map Rendering (Restored)
+            const buyerCity = localStorage.getItem('userLocation') || 'Nashik, Maharashtra';
+            const farmerCity = data.location || 'Mumbai, Maharashtra';
+            renderSourcingMap(buyerCity, farmerCity);
+
             const statusBadge = document.getElementById("status-display");
             const status = data.status || 'pending';
             
@@ -356,3 +363,76 @@ window.downloadInvoice = () => {
         });
     }, 250);
 };
+
+// -- 6. Dynamic Sourcing Map Logic (Restored) --
+const LOCAL_COORDS = {
+    "Nashik": [20.0059, 73.7898],
+    "Mumbai": [19.0760, 72.8777],
+    "Pune": [18.5204, 73.8567],
+    "Nagpur": [21.1458, 79.0882],
+    "Ahmedabad": [23.0225, 72.5714],
+    "Delhi": [28.6139, 77.2090]
+};
+
+async function getCoordinates(query) {
+    const city = query.split(',')[0].trim();
+    if (LOCAL_COORDS[city]) return LOCAL_COORDS[city];
+
+    try {
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        const data = await resp.json();
+        if (data.length > 0) return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+    } catch (e) {
+        console.error("Geocoding failed:", e);
+    }
+    return LOCAL_COORDS["Nashik"]; // Fallback
+}
+
+async function renderSourcingMap(buyerCity, farmerCity) {
+    const mapContainer = document.getElementById('sourcingMap');
+    if (!mapContainer) return;
+
+    if (window.sourcingMapInstance) window.sourcingMapInstance.remove();
+
+    const buyerCoords = await getCoordinates(buyerCity);
+    const farmerCoords = await getCoordinates(farmerCity);
+
+    const map = L.map('sourcingMap').setView(buyerCoords, 6);
+    window.sourcingMapInstance = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const createEmojiIcon = (emoji) => L.divIcon({
+        html: `<div class="custom-marker-emoji">${emoji}</div>`,
+        className: 'leaflet-div-icon',
+        iconSize: [40, 40],
+        iconAnchor: [20, 20]
+    });
+
+    L.marker(farmerCoords, { icon: createEmojiIcon('👩‍🌾') }).addTo(map).bindPopup(`<b>Farmer Origin</b><br>${farmerCity}`);
+    L.marker(buyerCoords, { icon: createEmojiIcon('📍') }).addTo(map).bindPopup(`<b>Your Location</b><br>${buyerCity}`);
+
+    const polyline = L.polyline([farmerCoords, buyerCoords], {
+        color: '#059669',
+        weight: 3,
+        dashArray: '10, 10',
+        lineCap: 'round',
+        opacity: 0.8
+    }).addTo(map);
+
+    map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+
+    const R = 6371; // km
+    const dLat = (buyerCoords[0] - farmerCoords[0]) * Math.PI / 180;
+    const dLon = (buyerCoords[1] - farmerCoords[1]) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(farmerCoords[0] * Math.PI / 180) * Math.cos(buyerCoords[0] * Math.PI / 180) * 
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = Math.round(R * c);
+
+    document.getElementById('map-dist').innerText = `${distance} km`;
+    document.getElementById('map-co2').innerText = `${(distance * 0.05).toFixed(1)} kg`;
+}

@@ -63,6 +63,22 @@ function getCropImage(name) {
     return "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?auto=format&fit=crop&q=80&w=400";
 }
 
+// Global helper for dynamic crop emojis (New)
+function getCropEmoji(name) {
+    const crop = (name || "").toLowerCase();
+    if (crop.includes("mango")) return "🥭";
+    if (crop.includes("chilli") || crop.includes("chili")) return "🌶️";
+    if (crop.includes("potato")) return "🥔";
+    if (crop.includes("tomato")) return "🍅";
+    if (crop.includes("onion")) return "🧅";
+    if (crop.includes("wheat") || crop.includes("rice") || crop.includes("grain")) return "🌾";
+    if (crop.includes("banana")) return "🍌";
+    if (crop.includes("apple")) return "🍎";
+    if (crop.includes("carrot")) return "🥕";
+    if (crop.includes("corn")) return "🌽";
+    return "🌿"; 
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Session & UI Setup
     const farmerId = localStorage.getItem('farmerId');
@@ -163,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const escName = (item.name || "").replace(/'/g, "\\'");
             
             card.innerHTML = `
-                <div class="p-icon">🌿</div>
+                <div class="p-icon">${getCropEmoji(item.name)}</div>
                 <h3 class="p-name">${item.name}</h3>
                 <p class="p-meta">${item.qty} ${item.unit} Available</p>
                 <div class="p-price">₹${item.price} <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">/ ${item.unit}</span></div>

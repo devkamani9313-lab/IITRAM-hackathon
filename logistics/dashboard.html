@@ -6,7 +6,46 @@
     <title>Logistics Dashboard | FarmConnect</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/global.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <style>
+        #map-command-center {
+            height: 400px;
+            background: #f1f5f9;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 3.5rem;
+            z-index: 10;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .map-marker-label {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-weight: 800;
+            font-size: 0.75rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* NEW: High-Visibility Marker Icons */
+        .custom-div-icon {
+            background: white;
+            border: 2px solid var(--logistics);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .custom-div-icon:hover {
+            transform: scale(1.2);
+            z-index: 1000 !important;
+        }
         .sidebar {
             width: 280px;
             background: var(--surface);
@@ -162,6 +201,9 @@
                 </div>
             </div>
         </header>
+
+        <!-- NEW: Map Command Center -->
+        <div id="map-command-center"></div>
 
         <section id="shipment-list">
             <!-- Dynamic Shipment Injection -->

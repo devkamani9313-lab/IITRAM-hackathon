@@ -189,14 +189,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         snapshot.forEach((docSnap) => {
             const neg = docSnap.data();
             const row = document.createElement('div');
-            row.className = 'order-row-item';
+            row.className = 'order-row-item negotiation-row-align';
             row.innerHTML = `
                 <div class="o-detail"><span class="o-label">Buyer</span><span class="o-value">${neg.buyerName || 'Client'}</span></div>
                 <div class="o-detail"><span class="o-label">Crop</span><span class="o-value">${neg.productName}</span></div>
-                <div class="o-detail"><span class="o-label">Offered Price</span><span class="o-value" style="color: #2fb362; font-weight: 800;">₹${neg.offeredPrice || 0}</span></div>
+                <div class="o-detail"><span class="o-label">Offered Price</span><span class="o-value" style="color: var(--primary); font-weight: 800;">₹${neg.offeredPrice || 0}</span></div>
                 <div class="negotiation-actions">
-                    <button class="n-btn n-btn-accept" onclick="updateStatus('${docSnap.id}', 'accepted')">Accept</button>
-                    <button class="n-btn n-btn-reject" onclick="updateStatus('${docSnap.id}', 'rejected')">Reject</button>
+                    <button class="n-btn n-btn-accept" onclick="updateStatus('${docSnap.id}', 'accepted')">
+                        <i class="fa-solid fa-check"></i> Accept
+                    </button>
+                    <button class="n-btn n-btn-reject" onclick="updateStatus('${docSnap.id}', 'rejected')">
+                        <i class="fa-solid fa-xmark"></i> Reject
+                    </button>
                 </div>
             `;
             list.appendChild(row);

@@ -321,3 +321,68 @@
     .overview-header { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
     .stats-stripe { grid-template-columns: 1fr; }
 }
+
+/* =========================================
+   NEGOTIATION COMPONENT STYLING
+   ========================================= */
+
+.negotiation-row-align {
+    grid-template-columns: 1fr 1fr 1fr 2fr !important;
+    gap: 2rem;
+}
+
+.negotiation-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    align-items: center;
+}
+
+.n-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.65rem 1.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+}
+
+/* Accept Button: Emerald Premium */
+.n-btn-accept {
+    background: var(--primary);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+}
+
+.n-btn-accept:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.3);
+    filter: brightness(1.1);
+}
+
+.n-btn-accept:active {
+    transform: translateY(0);
+}
+
+/* Reject Button: Soft Coral / Danger */
+.n-btn-reject {
+    background: #fff5f5;
+    color: #ef4444;
+    border-color: #fee2e2;
+}
+
+.n-btn-reject:hover {
+    background: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+    transform: translateY(-2px);
+}
+
+.n-btn-reject:active {
+    transform: translateY(0);
+}

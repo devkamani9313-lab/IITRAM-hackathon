@@ -163,7 +163,7 @@
             <form id="addProduceForm" class="modal-form">
                 <div class="form-group">
                     <label>Harvest Item Name</label>
-                    <input type="text" id="prodName" placeholder="e.g. Alphonso Mangoes" required>
+                    <input type="text" id="prodName" placeholder="e.g. Alphonso Mangoes" oninput="fetchMarketTrend()" required>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
@@ -173,7 +173,7 @@
                     </div>
                     <div class="form-group">
                         <label>Unit</label>
-                        <select id="prodUnit">
+                        <select id="prodUnit" onchange="fetchMarketTrend()">
                             <option value="kg">kg</option>
                             <option value="Tons">Tons</option>
                             <option value="Dozen">Dozen</option>
@@ -183,11 +183,28 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Standard Wholesale Price (per unit)</label>
-                    <div class="price-input-bar">
-                        <span>₹</span>
-                        <input type="number" id="prodPrice" placeholder="45.00" required>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.5rem;">
+                        <label style="margin-bottom: 0;">Your Wholesale Price (per unit)</label>
+                        <span id="marketTrendStatus" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); opacity: 0; transition: 0.3s;">⚡ Syncing Hub Rates...</span>
                     </div>
+                    
+                    <div class="market-price-guidance-bar">
+                        <div class="price-guide-slot min-slot">
+                            <span class="label">Market Floor</span>
+                            <span id="minPriceDisplay" class="value">₹ --</span>
+                        </div>
+                        
+                        <div class="price-input-bar-enhanced">
+                            <span>₹</span>
+                            <input type="number" id="prodPrice" placeholder="0.00" oninput="validateFarmerPrice()" required>
+                        </div>
+
+                        <div class="price-guide-slot max-slot">
+                            <span class="label">Retail Ceiling</span>
+                            <span id="maxPriceDisplay" class="value">₹ --</span>
+                        </div>
+                    </div>
+                    <p id="priceValidationMsg" style="font-size: 0.75rem; margin-top: 0.75rem; color: var(--text-muted); font-weight: 600; min-height: 1.2rem;">Select a crop to see market guidance.</p>
                 </div>
 
                 <div class="form-group">

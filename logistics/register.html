@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Registration | FarmConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/global.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.95)),
+                url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80') no-repeat center center/cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .auth-card {
+            background: white;
+            padding: 3.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .auth-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--logistics-light);
+            color: var(--logistics);
+            margin: 0 auto 1.5rem;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-strong);
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--logistics);
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        }
+
+        .btn-register {
+            background: var(--logistics);
+            color: white;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1.1rem;
+            font-size: 1.05rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-register:hover {
+            background: var(--logistics-dark);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card animate-fade">
+        <div class="auth-icon">
+            <i class="fa-solid fa-truck-ramp-box"></i>
+        </div>
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem; font-weight: 850;">Partner Registration</h1>
+        <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Join the FarmConnect logistics network to handle regional deliveries.</p>
+        
+        <form id="logisticsRegisterForm">
+            <div class="form-group">
+                <label>Company / Provider Name</label>
+                <input type="text" id="reg-name" placeholder="e.g. Swift Logistics Nashik" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="reg-mobile" placeholder="9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label>Primary Service City</label>
+                    <select id="reg-location" required>
+                        <option value="Nashik">Nashik</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Ahmedabad">Ahmedabad</option>
+                        <option value="Surat">Surat</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Secure Password</label>
+                <input type="password" id="reg-password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-register" id="submitBtn">
+                Register as Partner <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>
+            </button>
+        </form>
+
+        <p style="margin-top: 2rem; color: var(--text-muted); font-size: 0.95rem;">
+            Already a partner? <a href="index.html" style="color: var(--logistics); font-weight: 700; text-decoration: none;">Login here</a>
+        </p>
+
+        <a href="../index.html" style="display: block; margin-top: 1.5rem; color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+            ← Back to Home
+        </a>
+    </div>
+
+    <script type="module">
+        import { db } from "../buyer/firebase-config.js";
+        import { collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const form = document.getElementById('logisticsRegisterForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('reg-name').value;
+            const mobile = document.getElementById('reg-mobile').value;
+            const location = document.getElementById('reg-location').value;
+            const password = document.getElementById('reg-password').value;
+            const submitBtn = document.getElementById('submitBtn');
+
+            submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Account...';
+            submitBtn.disabled = true;
+
+            try {
+                // 1. Check if mobile already exists
+                const q = query(collection(db, "users"), where("mobile", "==", mobile));
+                const snap = await getDocs(q);
+                
+                if (!snap.empty) {
+                    alert("This mobile number is already registered!");
+                    submitBtn.innerHTML = 'Register as Partner <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>';
+                    submitBtn.disabled = false;
+                    return;
+                }
+
+                // 2. Create Logistics User
+                await addDoc(collection(db, "users"), {
+                    name,
+                    mobile,
+                    location,
+                    password,
+                    role: 'logistics',
+                    createdAt: new Date().toISOString()
+                });
+
+                alert("Partner Registration Successful! Welcome to the network.");
+                window.location.href = "index.html";
+            } catch (err) {
+                console.error("Error creating account:", err);
+                alert("Something went wrong. Please try again.");
+                submitBtn.innerHTML = 'Register as Partner <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>

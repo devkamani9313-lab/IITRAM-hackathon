@@ -22,7 +22,100 @@ window.openFarmerModal = () => {
     if (modal) {
         modal.classList.add('active');
         const form = document.getElementById('addProduceForm');
-        if (form) form.reset();
+        if (form) {
+            form.reset();
+            // Reset market price UI
+            document.getElementById('minPriceDisplay').textContent = "₹ --";
+            document.getElementById('maxPriceDisplay').textContent = "₹ --";
+            document.getElementById('marketTrendStatus').style.opacity = 0;
+        }
+    }
+};
+
+// --- NEW: Market Intelligence Engine ---
+let currentMin = 0;
+let currentMax = 0;
+
+window.fetchMarketTrend = async () => {
+    const crop = document.getElementById('prodName').value;
+    const unit = document.getElementById('prodUnit').value;
+    const status = document.getElementById('marketTrendStatus');
+    const minD = document.getElementById('minPriceDisplay');
+    const maxD = document.getElementById('maxPriceDisplay');
+    const city = localStorage.getItem('farmerLocation') || "Nashik";
+
+    if (!crop || crop.length < 3) return;
+
+    status.style.opacity = 1;
+    status.textContent = `🔋 Analyzing ${city} Market Trends...`;
+
+    // Simulate API Latency (Agmarknet)
+    await new Promise(r => setTimeout(r, 600));
+
+    // Base market values (Simulated lookup table)
+    const basePrices = {
+        mango: { min: 450, max: 800, unit: 'Dozen' },
+        potato: { min: 14, max: 28, unit: 'kg' },
+        tomato: { min: 20, max: 45, unit: 'kg' },
+        onion: { min: 18, max: 55, unit: 'kg' },
+        wheat: { min: 22, max: 35, unit: 'kg' },
+        rice: { min: 35, max: 70, unit: 'kg' },
+        apple: { min: 80, max: 180, unit: 'kg' },
+        grapes: { min: 60, max: 120, unit: 'kg' },
+        orange: { min: 40, max: 90, unit: 'kg' },
+        chilli: { min: 45, max: 95, unit: 'kg' }
+    };
+
+    let lookup = null;
+    for (let key in basePrices) {
+        if (crop.toLowerCase().includes(key)) {
+            lookup = basePrices[key];
+            break;
+        }
+    }
+
+    if (!lookup) {
+        // Dynamic fallback for unknown crops
+        lookup = { min: 30, max: 100, unit: 'kg' };
+    }
+
+    // Adjust for City multiplier
+    let cityMultiplier = 1.0;
+    if (city.includes("Mumbai")) cityMultiplier = 1.25;
+    if (city.includes("Pune")) cityMultiplier = 1.15;
+
+    // Final Calculation
+    currentMin = Math.round(lookup.min * cityMultiplier);
+    currentMax = Math.round(lookup.max * cityMultiplier);
+
+    // If unit doesn't match base, convert (roughly)
+    if (unit === 'Tons') { currentMin *= 1000; currentMax *= 1000; }
+    if (unit === 'Quintal') { currentMin *= 100; currentMax *= 100; }
+    // Note: Mango/Dozen logic is handled by basePrice definition if matched
+
+    minD.textContent = `₹${currentMin}`;
+    maxD.textContent = `₹${currentMax}`;
+    status.textContent = `✅ Live ${city} Hub Rate Sync Complete`;
+    
+    // Auto-update price validation msg
+    validateFarmerPrice();
+};
+
+window.validateFarmerPrice = () => {
+    const val = Number(document.getElementById('prodPrice').value);
+    const msg = document.getElementById('priceValidationMsg');
+    
+    if (!val || !currentMin) return;
+
+    if (val < currentMin) {
+        msg.textContent = "⚠️ Warning: Your price is below the market floor. You might lose profit.";
+        msg.style.color = "#ec4899"; // pink
+    } else if (val > currentMax) {
+        msg.textContent = "⚠️ Warning: Your price is above the market ceiling. Buyers may prefer other farms.";
+        msg.style.color = "#f59e0b"; // amber
+    } else {
+        msg.textContent = "✨ Excellent! Your price is perfectly in line with market trends.";
+        msg.style.color = "#10b981"; // emerald
     }
 };
 

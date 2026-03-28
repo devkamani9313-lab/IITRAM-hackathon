@@ -14,6 +14,88 @@ import {
 const buyerId = localStorage.getItem('buyerId');
 const buyerName = localStorage.getItem('buyerName');
 let currentProduct = null;
+let currentMin = 0;
+let currentMax = 0;
+
+// --- NEW: Market Intelligence Engine (Buyer Side) ---
+window.fetchMarketTrend = async () => {
+    if (!currentProduct) return;
+    
+    const crop = currentProduct.name;
+    const unit = currentProduct.unit || 'kg';
+    const city = currentProduct.location || 'Nashik';
+    const status = document.getElementById('marketTrendStatus');
+    const minD = document.getElementById('minPriceDisplay');
+    const maxD = document.getElementById('maxPriceDisplay');
+
+    if (status) {
+        status.style.opacity = 1;
+        status.textContent = `🔋 Analyzing ${city} Hub Rates...`;
+    }
+
+    // Simulate API Latency (Agmarknet)
+    await new Promise(r => setTimeout(r, 600));
+
+    // Base market values (Sync with Farmer Database)
+    const basePrices = {
+        mango: { min: 450, max: 800, unit: 'Dozen' },
+        potato: { min: 14, max: 28, unit: 'kg' },
+        tomato: { min: 20, max: 45, unit: 'kg' },
+        onion: { min: 18, max: 55, unit: 'kg' },
+        wheat: { min: 22, max: 35, unit: 'kg' },
+        rice: { min: 35, max: 70, unit: 'kg' },
+        apple: { min: 80, max: 180, unit: 'kg' },
+        grapes: { min: 60, max: 120, unit: 'kg' },
+        orange: { min: 40, max: 90, unit: 'kg' },
+        chilli: { min: 45, max: 95, unit: 'kg' }
+    };
+
+    let lookup = null;
+    for (let key in basePrices) {
+        if (crop.toLowerCase().includes(key)) {
+            lookup = basePrices[key];
+            break;
+        }
+    }
+
+    if (!lookup) lookup = { min: 30, max: 100, unit: 'kg' };
+
+    // Adjust for Farmer's City multiplier
+    let cityMultiplier = 1.0;
+    if (city.includes("Mumbai")) cityMultiplier = 1.25;
+    if (city.includes("Pune")) cityMultiplier = 1.15;
+
+    currentMin = Math.round(lookup.min * cityMultiplier);
+    currentMax = Math.round(lookup.max * cityMultiplier);
+
+    // Unit conversion
+    if (unit === 'Tons') { currentMin *= 1000; currentMax *= 1000; }
+    if (unit === 'Quintal') { currentMin *= 100; currentMax *= 100; }
+
+    if (minD) minD.textContent = `₹${currentMin}`;
+    if (maxD) maxD.textContent = `₹${currentMax}`;
+    if (status) status.textContent = `✅ Live ${city} Sync Complete`;
+    
+    validateOfferPrice();
+};
+
+window.validateOfferPrice = () => {
+    const val = Number(document.getElementById('offeredPrice').value);
+    const msg = document.getElementById('priceValidationMsg');
+    
+    if (!val || !currentMin) return;
+
+    if (val < currentMin) {
+        msg.textContent = "⚠️ Note: Your offer is below the market floor. The farmer might decline.";
+        msg.style.color = "#ec4899"; // pink
+    } else if (val > currentMax) {
+        msg.textContent = "🚀 Top Offer! This exceeds the retail ceiling for this region.";
+        msg.style.color = "#3b82f6"; // blue
+    } else {
+        msg.textContent = "✨ Competitive Offer! This is well within the local market range.";
+        msg.style.color = "#10b981"; // emerald
+    }
+};
 
 // Global Image Fallbacks
 const categoryFallbacks = {

@@ -161,16 +161,33 @@
             <button class="close-modal" onclick="closeNegotiationModal()">&times;</button>
             
             <div id="modalInitial">
-                <h2 class="modal-title">Make an Offer</h2>
-                <p style="color:var(--text-light); font-size: 0.9rem;" id="modal-offer-text">The current price is ₹45/kg. What is your offer?</p>
+                <h2 class="modal-title">Express Your Price</h2>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.5rem; margin-top: 1.5rem;">
+                    <p id="modal-offer-text" style="color:var(--text-light); font-size: 0.9rem; margin-bottom: 0;">Market trends for this region:</p>
+                    <span id="marketTrendStatus" style="font-size: 0.75rem; font-weight: 700; color: var(--primary); opacity: 0; transition: 0.3s;">⚡ Syncing Hub Rates...</span>
+                </div>
                 
-                <div class="negotiation-form">
-                    <div class="negotiation-input-group">
-                        <span>₹</span>
-                        <input type="number" id="offeredPrice" placeholder="0.00" value="40">
+                <div class="market-price-guidance-bar" style="margin-bottom: 2rem;">
+                    <div class="price-guide-slot min-slot">
+                        <span class="label">Market Floor</span>
+                        <span id="minPriceDisplay" class="value">₹ --</span>
                     </div>
+                    
+                    <div class="price-input-bar-enhanced">
+                        <span>₹</span>
+                        <input type="number" id="offeredPrice" placeholder="0.00" oninput="validateOfferPrice()">
+                    </div>
+
+                    <div class="price-guide-slot max-slot">
+                        <span class="label">Retail Ceiling</span>
+                        <span id="maxPriceDisplay" class="value">₹ --</span>
+                    </div>
+                </div>
+
+                <div class="negotiation-form">
+                    <p id="priceValidationMsg" style="font-size: 0.8rem; margin-bottom: 1.5rem; color: var(--text-light); font-weight: 600; text-align: center; min-height: 1.2rem;">Our AI is analyzing the best price for your offer.</p>
                     <button id="send-neg-btn" class="btn btn-large btn-buy" style="width:100%;" onclick="sendNegotiationRequest()">
-                        <i class="fa-solid fa-paper-plane"></i> Send Request
+                        <i class="fa-solid fa-paper-plane"></i> Submit Your Offer
                     </button>
                 </div>
             </div>
@@ -194,6 +211,13 @@
             document.getElementById('negotiationModal').style.display = 'flex';
             document.getElementById('modalInitial').style.display = 'block';
             document.getElementById('modalSuccess').style.display = 'none';
+            // Trigger Market Analysis
+            if (window.fetchMarketTrend) window.fetchMarketTrend();
+            
+            const minDisp = document.getElementById('minPriceDisplay');
+            const maxDisp = document.getElementById('maxPriceDisplay');
+            if (minDisp) minDisp.textContent = "₹ --";
+            if (maxDisp) maxDisp.textContent = "₹ --";
         }
 
         function closeNegotiationModal() {

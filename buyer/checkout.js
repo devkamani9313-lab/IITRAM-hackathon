@@ -273,7 +273,9 @@ window.processPayment = async () => {
                 status: isCOD ? "placed" : "paid",
                 paymentMethod: selectedMethod === 'cod' ? "Cash on Delivery" : selectedMethod.toUpperCase(),
                 deliveryMethod: deliveryFee === 0 ? "Self Pickup" : "Home Delivery",
-                location: fData.location,
+                location: fData.location, // Farmer's Pickup City
+                buyerCity: localStorage.getItem('userLocation') || 'Maharashtra', // Delivery Destination City
+                logisticsStatus: deliveryFee === 0 ? "n/a" : "pending_pickup",
                 createdAt: serverTimestamp()
             };
             

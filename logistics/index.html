@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Portal | FarmConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/global.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.95)),
+                url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80') no-repeat center center/cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4rem 1rem;
+        }
+
+        .portal-container {
+            max-width: 1000px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 4rem;
+        }
+
+        /* Discovery Styles */
+        .discovery-section {
+            background: white;
+            padding: 3rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .partner-list {
+            margin-top: 2rem;
+            display: grid;
+            gap: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .partner-card {
+            background: var(--bg-main);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .partner-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--logistics-light);
+            color: var(--logistics);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Auth Styles */
+        .auth-sidebar {
+            background: white;
+            padding: 3rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-lg);
+            height: fit-content;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-strong);
+            outline: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-logistics {
+            background: var(--logistics);
+            color: white;
+            width: 100%;
+            padding: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        @media(max-width: 900px) {
+            .portal-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="portal-container animate-fade">
+        <!-- Part 1: Public Discovery -->
+        <section class="discovery-section">
+            <div style="margin-bottom: 2.5rem;">
+                <h2 style="font-size: 2.25rem; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 0.5rem;">Find Delivery Partners</h2>
+                <p style="color: var(--text-muted); font-weight: 500;">Select a city to explore verified logistics providers in your region.</p>
+            </div>
+
+            <div class="form-group">
+                <select id="search-city" onchange="findPartners()">
+                    <option value="" disabled selected>Select service city...</option>
+                    <option value="Nashik">Nashik Hub</option>
+                    <option value="Mumbai">Mumbai Hub</option>
+                    <option value="Pune">Pune Hub</option>
+                    <option value="Ahmedabad">Ahmedabad Hub</option>
+                    <option value="Surat">Surat Hub</option>
+                </select>
+            </div>
+
+            <div id="partner-results" class="partner-list">
+                <div style="text-align: center; color: var(--text-muted); padding: 4rem 1rem;">
+                    <i class="fa-solid fa-map-location-dot" style="font-size: 3rem; margin-bottom: 1.5rem; opacity: 0.1;"></i>
+                    <p>Select a city above to view available partners.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Part 2: Partner Auth -->
+        <aside class="auth-sidebar">
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔐</div>
+                <h3 style="font-size: 1.5rem; font-weight: 850;">Partner Entrance</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Secure access to your shipments.</p>
+            </div>
+
+            <form id="logisticsLoginForm">
+                <div class="form-group">
+                    <label>Registered Mobile</label>
+                    <input type="tel" id="login-mobile" placeholder="9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn-logistics" id="loginBtn">
+                    Login to Hub <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); text-align: center;">
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Want to join the network?</p>
+                <a href="register.html" style="color: var(--logistics); font-weight: 700; text-decoration: none; font-size: 0.95rem;">Register Your Service →</a>
+            </div>
+
+            <a href="../index.html" style="display: block; margin-top: 2rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); text-decoration: none; font-weight: 600;">← Back to Role Select</a>
+        </aside>
+    </div>
+
+    <script type="module">
+        import { db } from "../buyer/firebase-config.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // --- 1. SEARCH LOGIC ---
+        window.findPartners = async () => {
+            const city = document.getElementById('search-city').value;
+            const container = document.getElementById('partner-results');
+            
+            container.innerHTML = `
+                <div style="text-align: center; padding: 4rem 1rem;">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--logistics);"></i>
+                    <p style="margin-top: 1rem; color: var(--text-muted);">Scanning ${city} network...</p>
+                </div>`;
+
+            try {
+                const q = query(collection(db, "users"), where("role", "==", "logistics"), where("location", "==", city));
+                const snap = await getDocs(q);
+                
+                if (snap.empty) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 4rem 1rem; opacity: 0.6;">
+                            <p>No partners found in ${city} yet.</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = '';
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    html += `
+                        <div class="partner-card">
+                            <div class="partner-avatar"><i class="fa-solid fa-truck"></i></div>
+                            <div style="flex-grow: 1;">
+                                <h4 style="font-weight: 800; font-size: 1.1rem; margin-bottom: 0.25rem;">${data.name}</h4>
+                                <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
+                                    <span>📍 ${data.location}</span>
+                                    <span>⭐ 4.9 Verified</span>
+                                </div>
+                            </div>
+                            <div style="padding: 0.5rem 1rem; background: #f0fdf4; color: #166534; font-size: 0.75rem; font-weight: 800; border-radius: 9999px;">
+                                ACTIVE
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error("Discovery error:", err);
+                container.innerHTML = '<p style="color: red; text-align: center;">Failed to load partners.</p>';
+            }
+        };
+
+        // --- 2. LOGIN LOGIC ---
+        const loginForm = document.getElementById('logisticsLoginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const mobile = document.getElementById('login-mobile').value;
+            const pass = document.getElementById('login-pass').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            loginBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
+            loginBtn.disabled = true;
+
+            try {
+                const q = query(collection(db, "users"), 
+                    where("mobile", "==", mobile), 
+                    where("password", "==", pass),
+                    where("role", "==", "logistics")
+                );
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    alert("Invalid mobile or password for Logistics Partner account.");
+                    loginBtn.innerHTML = 'Login to Hub <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>';
+                    loginBtn.disabled = false;
+                    return;
+                }
+
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+
+                // SUCCESS: Store Session
+                localStorage.setItem('logisticsId', userDoc.id);
+                localStorage.setItem('logisticsName', userData.name);
+                localStorage.setItem('logisticsCity', userData.location);
+
+                alert("Welcome back, " + userData.name + "!");
+                window.location.href = "dashboard.html";
+
+            } catch (err) {
+                console.error("Login error:", err);
+                alert("Login failed. Check your connection.");
+                loginBtn.innerHTML = 'Login to Hub <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>';
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

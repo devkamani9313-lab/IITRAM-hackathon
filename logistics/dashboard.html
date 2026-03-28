@@ -151,10 +151,18 @@
             cursor: pointer;
             transition: 0.2s;
         }
-
         .btn-action:hover { background: var(--logistics-dark); }
         .btn-delivered { background: #10b981; }
         .btn-delivered:hover { background: #059669; }
+
+        /* View State Management */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        
+        .nav-item { cursor: pointer; }
+
+        #map-command-center { width: 100%; height: 100%; }
+        #map-command-center.expanded { height: 75vh; }
     </style>
 </head>
 <body style="background: var(--bg-main);">
@@ -165,15 +173,15 @@
         </a>
 
         <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
-            <a href="#" class="nav-item active">
+            <div id="nav-active" class="nav-item active" onclick="switchTab('active')">
                 <i class="fa-solid fa-truck-fast"></i> Active Shipments
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div id="nav-history" class="nav-item" onclick="switchTab('history')">
                 <i class="fa-solid fa-clipboard-check"></i> History
-            </a>
-            <a href="#" class="nav-item">
+            </div>
+            <div id="nav-map" class="nav-item" onclick="switchTab('map')">
                 <i class="fa-solid fa-map-location-dot"></i> Network Map
-            </a>
+            </div>
         </nav>
 
         <div style="margin-top: auto;">
@@ -184,13 +192,13 @@
     </aside>
 
     <main class="main-content">
-        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem;">
+        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
             <div>
-                <h1 style="font-size: 2.25rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 0.5rem; color: var(--text-main);">Logistics Hub</h1>
-                <p style="color: var(--text-muted); font-weight: 500;">Real-time management for "Home Delivery" orders.</p>
+                <h1 id="view-title" style="font-size: 2.25rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 0.5rem; color: var(--text-main);">Logistics Hub</h1>
+                <p id="view-subtitle" style="color: var(--text-muted); font-weight: 500;">Real-time management for "Home Delivery" orders.</p>
             </div>
             
-            <div style="display: flex; gap: 1.5rem; min-width: 400px;">
+            <div id="stats-container" style="display: flex; gap: 1.5rem; min-width: 400px;">
                 <div class="stat-card">
                     <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 800;">Pending Pickup</span>
                     <h2 id="stat-pending" style="font-size: 1.75rem; font-weight: 900; margin-top: 0.25rem;">0</h2>
@@ -202,16 +210,39 @@
             </div>
         </header>
 
-        <!-- NEW: Map Command Center -->
-        <div id="map-command-center"></div>
-
-        <section id="shipment-list">
-            <!-- Dynamic Shipment Injection -->
-            <div style="text-align: center; padding: 5rem 2rem; background: var(--surface); border-radius: var(--radius-xl); border: 2px dashed var(--border-strong);">
-                <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--logistics); margin-bottom: 1rem;"></i>
-                <p style="color: var(--text-muted); font-weight: 600;">Syncing with Marketplace...</p>
+        <!-- View 1: Active Shipments -->
+        <div id="section-active" class="view-section active">
+            <div id="map-slot-active" style="height: 350px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-lg); margin-bottom: 2rem;">
+                <!-- Map moves here -->
             </div>
-        </section>
+            <section id="shipment-list">
+                <div style="text-align: center; padding: 5rem 2rem; background: var(--surface); border-radius: var(--radius-xl); border: 2px dashed var(--border-strong);">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--logistics); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-muted); font-weight: 600;">Syncing Marketplace...</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- View 2: Delivery History -->
+        <div id="section-history" class="view-section">
+            <section id="history-list">
+                <div style="text-align: center; padding: 5rem 2rem; background: var(--surface); border-radius: var(--radius-xl); border: 1px solid var(--border-subtle); opacity: 0.6;">
+                    <i class="fa-solid fa-clock-rotate-left" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p>No completed deliveries found yet for this region.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- View 3: Network Map -->
+        <div id="section-map" class="view-section">
+            <div id="map-slot-full" style="height: 75vh; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border-subtle); box-shadow: var(--shadow-xl);">
+                <!-- Map moves here -->
+            </div>
+        </div>
+
+        <!-- Shared Map Instance -->
+        <div id="map-command-center" style="display: none;"></div>
+
     </main>
 
     <script type="module" src="dashboard.js"></script>

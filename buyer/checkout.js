@@ -217,7 +217,8 @@ window.processPayment = async () => {
                     farmerId: item.farmerId,
                     farmerName: item.farmerName,
                     items: [],
-                    subtotal: 0
+                    subtotal: 0,
+                    location: item.location || "Maharashtra"
                 };
             }
             ordersByFarmer[item.farmerId].items.push(`${item.qty}x ${item.productName}`);
@@ -246,6 +247,7 @@ window.processPayment = async () => {
                 status: isCOD ? "placed" : "paid",
                 paymentMethod: selectedMethod === 'cod' ? "Cash on Delivery" : selectedMethod.toUpperCase(),
                 deliveryMethod: deliveryFee === 0 ? "Self Pickup" : "Home Delivery",
+                location: fData.location,
                 createdAt: serverTimestamp()
             };
             

@@ -15,6 +15,14 @@ import {
 const buyerId = localStorage.getItem('buyerId');
 const buyerName = localStorage.getItem('buyerName');
 
+// Global Image Fallbacks (Shared across functions and onerror handlers)
+const categoryFallbacks = {
+    fruits: "https://images.unsplash.com/photo-1519996529931-28324d5a630e?auto=format&fit=crop&q=80&w=400", // Combined Fruit Spread
+    vegetables: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&q=80&w=400", // Combined Vegetable Assortment
+    grains: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400", // Combined Grains in Bowls
+    cereals: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400"
+};
+
 window.logoutBuyer = () => {
     if (confirm("Log out of FarmConnect?")) {
         localStorage.removeItem('buyerId');
@@ -120,27 +128,47 @@ function applyCurrentFilters() {
 }
 
 // Helper for dynamic images if the farmer didn't specify a unique one
-function getCropImage(name, currentUrl) {
-    const tomatoUrl = "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400";
-    const potatoUrl = "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&q=80&w=400";
-    
-    // Robustness Check: If we have NO url or it's the old generic tomato, heal it.
-    if (!currentUrl || currentUrl === tomatoUrl || currentUrl === "" || currentUrl === "undefined") {
-        const crop = (name || "").toLowerCase();
-        const images = {
-            mango: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=400",
-            potato: potatoUrl,
-            tomato: tomatoUrl,
-            chilli: "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&q=80&w=400",
-            onion: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=400",
-            wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d0200?auto=format&fit=crop&q=80&w=400",
-            rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400"
-        };
+function getCropImage(name, currentUrl, category) {
+    const crop = (name || "").toLowerCase();
+    const cat = (category || "").toLowerCase();
 
+    const images = {
+        mango: "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&q=80&w=400",
+        potato: "https://images.unsplash.com/photo-1518977676601-b53f02bad675?auto=format&fit=crop&q=80&w=400",
+        tomato: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=400",
+        "green chilli": "https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?auto=format&fit=crop&q=80&w=400",
+        chilli: "https://images.unsplash.com/photo-1601648764658-cf37e8c89b70?auto=format&fit=crop&q=80&w=400",
+        onion: "https://images.unsplash.com/photo-1508747703725-719777637510?auto=format&fit=crop&q=80&w=400",
+        wheat: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&q=80&w=400",
+        rice: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400",
+        carrot: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&q=80&w=400",
+        orange: "https://images.unsplash.com/photo-1557800636-894a64c1696f?auto=format&fit=crop&q=80&w=400",
+        grapes: "https://images.unsplash.com/photo-1537640538966-79f369b41f8f?auto=format&fit=crop&q=80&w=400",
+        apple: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&q=80&w=400",
+        banana: "https://images.unsplash.com/photo-1571771894821-ad9b58a33646?auto=format&fit=crop&q=80&w=400",
+        corn: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&q=80&w=400",
+        lemon: "https://images.unsplash.com/photo-1568569350062-ebad051a3d1d?auto=format&fit=crop&q=80&w=400",
+        garlic: "https://images.unsplash.com/photo-1540148426945-6cf22a6b2383?auto=format&fit=crop&q=80&w=400",
+        ginger: "https://images.unsplash.com/photo-1599307767316-776533bb941c?auto=format&fit=crop&q=80&w=400",
+        vegetable: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&q=80&w=400",
+        fruit: "https://images.unsplash.com/photo-1519996529931-28324d5a630e?auto=format&fit=crop&q=80&w=400",
+        grain: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=400"
+    };
+
+    // Keyword Match Logic (Priority)
+    const keywordMatch = (function() {
+        if (crop.includes("green chilli")) return images["green chilli"];
         for (let key in images) {
             if (crop.includes(key)) return images[key];
         }
-        return "https://placehold.co/400x300/eafaf1/2fb362?text=Image+Not+Available";
+        return null;
+    })();
+
+    if (keywordMatch) return keywordMatch;
+    
+    // Category Fallback logic
+    if (!currentUrl || currentUrl === "" || currentUrl === "undefined" || currentUrl.includes("tomato") || currentUrl.includes("0651230702") || currentUrl.includes("featured")) {
+        return categoryFallbacks[cat] || categoryFallbacks.vegetables;
     }
 
     return currentUrl;
@@ -156,15 +184,19 @@ function renderProducts(products) {
     
     productGrid.innerHTML = "";
 
-    const noImagePlaceholder = "https://placehold.co/400x300/eafaf1/2fb362?text=Image+Not+Available";
-
     products.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
         
         const safeName = p.name || 'Produce';
         const safeFarmer = p.farmerName || 'Farmer';
-        const rawImg = getCropImage(safeName, p.imageUrl);
+        const rawImg = getCropImage(safeName, p.imageUrl, p.category);
+        const catRaw = (p.category || "vegetables").toLowerCase();
+        let catMatch = "vegetables";
+        if (catRaw.includes("fruit")) catMatch = "fruits";
+        if (catRaw.includes("grain") || catRaw.includes("cereal")) catMatch = "grains";
+        
+        const fallback = categoryFallbacks[catMatch] || categoryFallbacks.vegetables;
         const safeLocation = p.location || 'Maharashtra';
         const safeUnit = p.unit || 'kg';
         const safePrice = Number(p.price) || 0;
@@ -174,7 +206,7 @@ function renderProducts(products) {
                 <img src="${rawImg}" 
                      alt="${safeName.replace(/"/g, '&quot;')}" 
                      class="product-image"
-                     onerror="this.src='${noImagePlaceholder}'">
+                     onerror="this.src='${fallback}'; this.onerror=null;">
                 ${p.isOrganic ? '<span class="badge">Organic</span>' : ''}
             </div>
             <div class="product-info">
@@ -207,7 +239,7 @@ function renderProducts(products) {
         const btnAdd = card.querySelector('.btn-add-action');
         btnAdd.addEventListener('click', (e) => {
             e.stopPropagation();
-            window.addToCart(p.id, safeName, p.farmerId, safeFarmer, safePrice, rawImg, safeUnit);
+            window.addToCart(p.id, safeName, p.farmerId, safeFarmer, safePrice, rawImg, safeUnit, safeLocation);
         });
 
         productGrid.appendChild(card);
@@ -246,7 +278,7 @@ function setupFilters() {
 }
 
 // -- 4. Cart Features --
-window.addToCart = async (productId, productName, farmerId, farmerName, price, imageUrl, unit) => {
+window.addToCart = async (productId, productName, farmerId, farmerName, price, imageUrl, unit, location) => {
     if (!buyerId) return alert("Please log in as a Buyer first.");
 
     let finalPrice = Number(price);
@@ -287,6 +319,7 @@ window.addToCart = async (productId, productName, farmerId, farmerName, price, i
                 price: finalPrice,
                 imageUrl,
                 unit,
+                location: location || "Maharashtra",
                 qty: 1,
                 addedAt: serverTimestamp()
             });

@@ -88,6 +88,7 @@ if (loginForm) {
             const data = userDoc.data();
             localStorage.setItem('buyerId', userDoc.id);
             localStorage.setItem('buyerName', data.name);
+            localStorage.setItem('userLocation', data.location || 'Maharashtra');
             
             alert("Logged in successfully!");
             window.location.href = "index.html";
@@ -106,6 +107,7 @@ window.logoutBuyer = () => {
     if (confirm("Log out of FarmConnect?")) {
         localStorage.removeItem('buyerId');
         localStorage.removeItem('buyerName');
+        localStorage.removeItem('userLocation');
         window.location.href = "login.html";
     }
 };

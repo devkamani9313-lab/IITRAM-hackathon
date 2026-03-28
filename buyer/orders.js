@@ -159,8 +159,11 @@ async function loadOrderDetails(orderId) {
             document.getElementById("farmer-loc").innerText = `📍 ${data.location || 'Unknown'}`;
             
             // Trigger Dynamic Sourcing Map Rendering (Restored)
+            // Trigger Dynamic Sourcing Map Rendering (Restored)
             const buyerCity = localStorage.getItem('userLocation') || 'Nashik, Maharashtra';
             const farmerCity = data.location || 'Mumbai, Maharashtra';
+            
+            console.log("Rendering Map Journey:", buyerCity, "->", farmerCity);
             renderSourcingMap(buyerCity, farmerCity);
 
             const statusBadge = document.getElementById("status-display");
@@ -371,7 +374,19 @@ const LOCAL_COORDS = {
     "Pune": [18.5204, 73.8567],
     "Nagpur": [21.1458, 79.0882],
     "Ahmedabad": [23.0225, 72.5714],
-    "Delhi": [28.6139, 77.2090]
+    "Delhi": [28.6139, 77.2090],
+    "Surat": [21.1702, 72.8311],
+    "Indore": [22.7196, 75.8577],
+    "Jaipur": [26.9124, 75.7873],
+    "Vadodara": [22.3072, 73.1812],
+    "Rajkot": [22.3039, 70.8022],
+    "Amravati": [20.9320, 77.7523],
+    "Aurangabad": [19.8762, 75.3433],
+    "Bhopal": [23.2599, 77.4126],
+    "Kolhapur": [16.7050, 74.2433],
+    "Satara": [17.6805, 73.9918],
+    "Solapur": [17.6599, 75.9064],
+    "Sangli": [16.8524, 74.5815]
 };
 
 async function getCoordinates(query) {
@@ -431,7 +446,10 @@ async function renderSourcingMap(buyerCity, farmerCity) {
               Math.cos(farmerCoords[0] * Math.PI / 180) * Math.cos(buyerCoords[0] * Math.PI / 180) * 
               Math.sin(dLon/2) * Math.sin(dLon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = Math.round(R * c);
+    let distance = Math.round(R * c);
+
+    // If both points are same, add theoretical journey (e.g. intra-city delivery)
+    if (distance < 5) distance = 12; 
 
     document.getElementById('map-dist').innerText = `${distance} km`;
     document.getElementById('map-co2').innerText = `${(distance * 0.05).toFixed(1)} kg`;

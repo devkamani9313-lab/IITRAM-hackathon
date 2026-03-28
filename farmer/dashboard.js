@@ -1,7 +1,10 @@
 // Farmer Dashboard: Integrated Firebase Cloud Interaction
 import { db, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, updateDoc, doc, serverTimestamp, deleteDoc } from "../assets/firebase-config.js";
 
-// Bulletproof Global Handlers
+// Health Score Metrics (State)
+let deliveredCount = 0;
+let refundAcceptedCount = 0;
+
 window.openFarmerModal = () => {
     const modal = document.getElementById('modalOverlay');
     if (modal) {
@@ -266,9 +269,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         if (activeOrdersCount) activeOrdersCount.textContent = totalCount;
+        
+        // Count officially delivered orders for health score
+        deliveredCount = snapshot.docs.filter(d => d.data().status === 'delivered').length;
+        updateHealthScore();
     });
 
-    // 6. Refund Request Listener
+    // 6. Refund Request Listener (Pending actions)
     const qRefunds = query(collection(db, "refund_requests"), where("farmerId", "==", farmerId), where("status", "==", "pending"));
     onSnapshot(qRefunds, (snapshot) => {
         const section = document.getElementById('refundSection');
@@ -304,7 +311,48 @@ document.addEventListener('DOMContentLoaded', async () => {
             list.appendChild(row);
         });
     });
+
+    // 7. Health Score Listener (Accepted refunds only)
+    const qHealthNeg = query(collection(db, "refund_requests"), where("farmerId", "==", farmerId), where("status", "==", "accepted"));
+    onSnapshot(qHealthNeg, (snapshot) => {
+        refundAcceptedCount = snapshot.size;
+        updateHealthScore();
+    });
 });
+
+// -- Performance Logic: Health Score --
+function updateHealthScore() {
+    const valueEl = document.getElementById('healthScoreValue');
+    const labelEl = document.getElementById('healthScoreLabel');
+    const tileEl = document.getElementById('healthScoreTile');
+
+    if (!valueEl || !labelEl || !tileEl) return;
+
+    // Formula: (Default 100) - (7% per refund) + (0.5% per delivered order)
+    let score = 100 - (refundAcceptedCount * 7) + (deliveredCount * 0.5);
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    valueEl.textContent = `${score}%`;
+
+    // Tier Levels (Color & Label)
+    if (score >= 90) {
+        labelEl.textContent = "Excellent Service 🌟";
+        tileEl.style.background = "#059669"; // Emerald-600
+        tileEl.style.color = "white";
+    } else if (score >= 75) {
+        labelEl.textContent = "Good Service ✅";
+        tileEl.style.background = "#84cc16"; // Lime-500
+        tileEl.style.color = "white";
+    } else if (score >= 50) {
+        labelEl.textContent = "Needs Improvement ⚠️";
+        tileEl.style.background = "#f59e0b"; // Amber-500
+        tileEl.style.color = "black";
+    } else {
+        labelEl.textContent = "At Risk ❌";
+        tileEl.style.background = "#ef4444"; // Red-500
+        tileEl.style.color = "white";
+    }
+}
 
 // -- Global Helpers for Refunds --
 window.handleRefund = async (requestId, orderId, action) => {

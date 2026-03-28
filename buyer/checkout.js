@@ -16,10 +16,26 @@ window.openPaymentModal = () => {
     if (realCartItems.length === 0) return alert("Your cart is empty!");
     document.getElementById('modal-pay-amount').textContent = cartTotalAmount.toFixed(2);
     document.getElementById('paymentModalOverlay').style.display = 'flex';
+    togglePayDetails(); // Initialize correct view
 };
 
 window.closePaymentModal = () => {
     document.getElementById('paymentModalOverlay').style.display = 'none';
+};
+
+window.togglePayDetails = () => {
+    const method = document.querySelector('input[name="pay-method"]:checked').value;
+    const container = document.getElementById('pay-details-container');
+    const upi = document.getElementById('upi-details');
+    const card = document.getElementById('card-details');
+
+    if (method === 'cod') {
+        container.style.display = 'none';
+    } else {
+        container.style.display = 'block';
+        upi.style.display = method === 'upi' ? 'block' : 'none';
+        card.style.display = method === 'card' ? 'block' : 'none';
+    }
 };
 
 window.selectLogistics = (mode, fee) => {
@@ -207,6 +223,16 @@ window.processPayment = async () => {
                 payBtn.disabled = false;
                 return;
             }
+        }
+
+        // --- 1.5 MOCK PAYMENT PROCESSING DELAY ---
+        const originalHTML = payBtn.innerHTML;
+        const selectedMethod = document.querySelector('input[name="pay-method"]:checked').value;
+        
+        if (selectedMethod !== 'cod') {
+            payBtn.innerHTML = '<i class="fa-solid fa-shield-halved fa-spin"></i> Securely Processing...';
+            payBtn.disabled = true;
+            await new Promise(resolve => setTimeout(resolve, 2000));
         }
 
         // --- 2. PREPARE ORDERS ---

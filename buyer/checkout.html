@@ -3,169 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout | FarmConnect Marketplace</title>
+    <title>Checkout | FarmConnect</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/global.css">
-    <link rel="stylesheet" href="index.css"> <!-- Navbar/Vars -->
     <link rel="stylesheet" href="checkout.css">
+    <link rel="stylesheet" href="index.css">
 </head>
-<body>
+<body style="background: var(--bg-main);">
 
-    <!-- Shared Navigation -->
     <nav class="navbar">
-        <a href="index.html" class="logo">
-            <i class="fa-solid fa-seedling"></i>
-            Farm<span>Connect</span>
-        </a>
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" placeholder="Search products...">
-        </div>
-        <div class="nav-actions">
-            <div class="cart-icon" onclick="window.location.href='checkout.html'">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span class="cart-badge">3</span>
+        <div class="nav-container container">
+            <a href="index.html" class="logo">
+                🌾 <span>FarmConnect</span>
             </div>
-            <div id="auth-container" class="auth-section" style="margin-left: 15px;">
-                <button id="login-nav-btn" class="btn" style="padding: 6px 15px; border-radius: 6px; font-weight: 600; background: var(--primary-color); color: white; border: none; cursor: pointer; display: none;" onclick="window.location.href='login.html'">
-                    Login
-                </button>
-                <div id="profile-area" class="profile-dropdown" style="display: none; align-items: center; gap: 8px;">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Profile" class="profile-img" style="width: 32px; height: 32px; border-radius: 50%;">
-                    <button id="logout-btn" class="nav-logout" style="padding: 4px 8px; font-size: 0.8rem;">Logout</button>
-                </div>
+            <div class="nav-links">
+                <a href="index.html">← Back to Marketplace</a>
             </div>
         </div>
     </nav>
 
-    <div class="checkout-container">
-        <!-- Left Column: Cart, Logistics & Payment -->
-        <div class="details-column">
+    <main class="checkout-container container">
+        <div class="checkout-layout animate-fade">
+            <!-- Left Column: Cart & Details -->
+            <div class="checkout-main">
+                <section class="checkout-section">
+                    <h2 class="section-title"><i class="fa-solid fa-cart-shopping"></i> Review Your Harvest</h2>
+                    <div id="cart-items-container" class="cart-items">
+                        <!-- Dynamic Cart Injection -->
+                        <div style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            <p>Loading your cart...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="checkout-section">
+                    <h2 class="section-title"><i class="fa-solid fa-truck-fast"></i> Delivery Logistics</h2>
+                    <div class="delivery-options">
+                        <div class="option-card active" onclick="selectLogistics('delivery', 50)">
+                            <i class="fa-solid fa-house-chimney"></i>
+                            <strong>Home Delivery</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">₹50.00 Flat Rate</p>
+                        </div>
+                        <div class="option-card" onclick="selectLogistics('pickup', 0)">
+                            <i class="fa-solid fa-store"></i>
+                            <strong>Self Pickup</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Free from Farm</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="checkout-section">
+                    <h2 class="section-title"><i class="fa-solid fa-location-dot"></i> Shipping Information</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Full Recipient Name</label>
+                            <input type="text" id="cust-name" placeholder="ABC Wholesale Ltd." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="tel" id="cust-phone" placeholder="+91 98765 43210" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Secondary / Alternative Address</label>
+                        <input type="text" id="cust-address" placeholder="Unit 4, Industrial Area, Sector 7...">
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: Summary Box -->
+            <aside class="checkout-sidebar">
+                <div class="checkout-section summary-box">
+                    <h2 class="section-title">Order Summary</h2>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal">₹0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Delivery Fee</span>
+                            <span id="summary-delivery">₹50.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Service Fee (1%)</span>
+                            <span id="summary-tax">₹0.00</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span id="summary-total">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary btn-checkout" onclick="openPaymentModal()">
+                        Secure Checkout <i class="fa-solid fa-shield-halved"></i>
+                    </button>
+                    
+                    <p style="font-size: 0.75rem; text-align: center; color: var(--text-muted); margin-top: 1rem;">
+                        <i class="fa-solid fa-lock"></i> SSL Encrypted & Secure
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- PREMIUM PAYMENT MODAL OVERLAY -->
+    <div id="paymentModalOverlay" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; width: 95%; max-width: 500px; padding: 3rem; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); position: relative;" class="animate-fade">
+            <button onclick="closePaymentModal()" style="position: absolute; top: 2rem; right: 2rem; border: none; background: none; font-size: 1.5rem; color: var(--border-strong); cursor: pointer;">&times;</button>
             
-            <!-- Cart Summary -->
-            <div class="checkout-section">
-                <h2 class="section-title"><i class="fa-solid fa-bag-shopping"></i> Review Your Cart</h2>
-                <div class="cart-items" id="real-cart-items">
-                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
-                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color);"></i>
-                        <p>Loading your farm-fresh cart...</p>
-                    </div>
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <div style="width: 60px; height: 60px; background: var(--secondary-light); color: var(--secondary); border-radius: 9999px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem;">
+                    <i class="fa-solid fa-credit-card"></i>
                 </div>
+                <h2 style="font-size: 1.75rem;">Complete Purchase</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">You are paying <strong>₹<span id="modal-pay-amount">0.00</span></strong></p>
             </div>
 
-            <!-- Logistics Section -->
-            <div class="checkout-section">
-                <h2 class="section-title"><i class="fa-solid fa-truck"></i> Logistics & Delivery</h2>
-                <div class="delivery-options" style="margin-bottom: 25px;">
-                    <div class="option-card active" id="opt-home" onclick="setDeliveryMode('home')">
-                        <i class="fa-solid fa-house-chimney" style="color: var(--primary-color);"></i>
-                        <div>
-                            <div style="font-weight:700;">Home Delivery</div>
-                            <div style="font-size:0.8rem; color:var(--text-light);">Direct to your business</div>
-                        </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem;">
+                <label style="border: 2px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; display: flex; align-items: center; gap: 1.25rem; cursor: pointer; transition: 0.2s; background: var(--bg-main);">
+                    <input type="radio" name="pay-method" value="upi" checked style="accent-color: var(--secondary); width: 1.1rem; height: 1.1rem;">
+                    <div>
+                        <div style="font-weight: 800;">UPI (PhonePe, GPay, etc.)</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Fast & Secure Payment</div>
                     </div>
-                    <div class="option-card" id="opt-pickup" onclick="setDeliveryMode('pickup')">
-                        <i class="fa-solid fa-warehouse"></i>
-                        <div>
-                            <div style="font-weight:700;">Self Pickup</div>
-                            <div style="font-size:0.8rem; color:var(--text-light);">Pick up from Farm</div>
-                        </div>
+                </label>
+                <label style="border: 2px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; display: flex; align-items: center; gap: 1.25rem; cursor: pointer; transition: 0.2s; background: var(--bg-main);">
+                    <input type="radio" name="pay-method" value="card" style="accent-color: var(--secondary); width: 1.1rem; height: 1.1rem;">
+                    <div>
+                        <div style="font-weight: 800;">Debit / Credit Card</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">All major cards supported</div>
                     </div>
-                </div>
-
-                <div class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Preferred Delivery Date</label>
-                        <input type="date" value="2026-03-30">
+                </label>
+                <label style="border: 2px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.25rem; display: flex; align-items: center; gap: 1.25rem; cursor: pointer; transition: 0.2s; background: var(--bg-main);">
+                    <input type="radio" name="pay-method" value="cod" style="accent-color: var(--secondary); width: 1.1rem; height: 1.1rem;">
+                    <div>
+                        <div style="font-weight: 800;">Cash on Delivery (COD)</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Pay the farmer upon delivery</div>
                     </div>
-                    <div class="form-group" id="delivery-address-group" style="grid-column: span 2;">
-                        <label>Delivery Address</label>
-                        <input type="text" placeholder="123 Business Lane, Midtown Plaza, Sector 45">
-                    </div>
-                </div>
+                </label>
             </div>
 
-            <!-- Final Order Summary -->
-            <div class="checkout-section">
-                <h2 class="section-title"><i class="fa-solid fa-receipt"></i> Order Summary</h2>
-                <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-light);">
-                    <span>Subtotal</span>
-                    <span id="cart-subtotal">₹0.00</span>
-                </div>
-                <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-light);">
-                    <span>Delivery Fee</span>
-                    <span id="cart-delivery">₹45.00</span>
-                </div>
-                <div class="summary-row" style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-light);">
-                    <span>GST (5%)</span>
-                    <span id="cart-tax">₹0.00</span>
-                </div>
-                
-                <div class="summary-total" style="border-top: 2px solid #f1f5f9; padding-top: 20px; margin-top: 20px; display: flex; justify-content: space-between; font-size: 1.4rem; font-weight: 800; color: var(--text-dark);">
-                    <span>Total Amount</span>
-                    <span id="cart-total">₹0.00</span>
-                </div>
-
-                <button class="btn btn-checkout" onclick="confirmAndProceed()" style="width: 100%; margin-top: 30px; padding: 18px; border-radius: 14px; font-size: 1.1rem; background: linear-gradient(135deg, var(--primary-blue), #1e4e8c); color: white; border: none; font-weight: 700; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;">
-                    Proceed to Payment 👉
-                </button>
-                
-                <p style="text-align:center; font-size: 0.75rem; color: var(--text-light); margin-top: 15px;">
-                    By proceeding, you agree to FarmConnect's Terms of Service.
-                </p>
-            </div>
+            <button id="paySecurelyBtn" onclick="processPayment()" class="btn btn-secondary" style="width: 100%; padding: 1.25rem; font-size: 1.1rem;">
+                Pay & Place Order 🚀
+            </button>
         </div>
     </div>
 
-    <!-- MOCK PAYMENT GATEWAY MODAL -->
-    <div id="paymentModalOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 20px; width: 90%; max-width: 450px; padding: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative;">
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <i class="fa-solid fa-shield-halved" style="font-size: 2.5rem; color: #38a169; margin-bottom: 1rem;"></i>
-                <h2 style="font-weight: 800; color: #1a202c;">Secure Payment</h2>
-                <p style="color: #718096; font-size: 0.95rem;">Select your preferred payment method.</p>
-            </div>
-            
-            <div style="background: #f7fafc; padding: 1rem; border-radius: 12px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; border: 1px dashed #e2e8f0;">
-                <span style="font-weight: 600; color: #4a5568;">Amount to Pay:</span>
-                <span id="payment-modal-total" style="font-size: 1.5rem; font-weight: 900; color: #2b6cb0;">₹0.00</span>
-            </div>
-
-            <div style="margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1rem;">
-                <label style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: 0.2s;">
-                    <input type="radio" name="pay-method" value="upi" checked style="accent-color: #2b6cb0; width: 1.2rem; height: 1.2rem;">
-                    <div>
-                        <div style="font-weight: 700;">UPI (GPay, PhonePe)</div>
-                        <div style="font-size: 0.8rem; color: #718096;">Instant Transfer</div>
-                    </div>
-                </label>
-                <label style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: 0.2s;">
-                    <input type="radio" name="pay-method" value="card" style="accent-color: #2b6cb0; width: 1.2rem; height: 1.2rem;">
-                    <div>
-                        <div style="font-weight: 700;">Credit / Debit Card</div>
-                        <div style="font-size: 0.8rem; color: #718096;">Visa, Mastercard, RuPay</div>
-                    </div>
-                </label>
-                <label style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: 0.2s;">
-                    <input type="radio" name="pay-method" value="cod" style="accent-color: #2b6cb0; width: 1.2rem; height: 1.2rem;">
-                    <div>
-                        <div style="font-weight: 700;">Cash on Delivery (COD)</div>
-                        <div style="font-size: 0.8rem; color: #718096;">Pay the farmer upon harvest arrival</div>
-                    </div>
-                </label>
-            </div>
-
-            <button id="paySecurelyBtn" onclick="processPayment()" style="width: 100%; padding: 1rem; background: #38a169; color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-lock"></i> Pay Securely Now
-            </button>
-            <button onclick="document.getElementById('paymentModalOverlay').style.display='none'" style="width: 100%; padding: 1rem; background: transparent; color: #a0aec0; border: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem;">
-                Cancel Payment
-            </button>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script type="module" src="auth.js"></script>
     <script type="module" src="checkout.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>

@@ -82,7 +82,7 @@
 .product-title {
     font-size: 3rem;
     font-weight: 800;
-    color: var(--text-dark);
+    color: var(--text-main);
     line-height: 1.1;
 }
 
@@ -103,12 +103,12 @@
 .meta-icon {
     width: 40px;
     height: 40px;
-    background: #f1f5f9;
+    background: var(--bg-main);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--primary-color);
+    color: var(--primary);
 }
 
 .meta-text label {
@@ -172,17 +172,23 @@
 }
 
 .btn-buy {
-    background: var(--primary-color);
+    background: var(--primary);
     color: white;
     border: none;
     font-weight: 700;
-    box-shadow: 0 10px 20px rgba(43, 108, 176, 0.2);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-buy:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .btn-negotiate {
     background: white;
-    color: var(--text-dark);
-    border: 2px solid #e2e8f0;
+    color: var(--text-main);
+    border: 2px solid var(--border-strong);
     font-weight: 700;
 }
 

@@ -9,26 +9,28 @@
 <body>
     <a href="../index.html" style="position:absolute; top:20px; left:20px; text-decoration:none; color:var(--dark-green); font-weight:bold;">← Back to Role Select</a>
     
-    <div class="auth-container" style="background: var(--light-green);">
-        <div class="auth-card" style="box-shadow: 0 10px 40px rgba(0,0,0,0.04); background: white; border: none;">
-            <h2 style="color: var(--dark-green); margin-bottom: 2rem;">🧑‍🌾 Farmer Login</h2>
+    <div class="auth-container">
+        <div class="auth-card card-premium animate-fade">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🧑‍🌾</div>
+            <h1 style="margin-bottom: 0.5rem;">Farmer Portal</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Manage your harvest, connect with buyers, and grow your business.</p>
             
-            <form action="dashboard.html">
+            <form id="farmer-login-form">
                 <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="tel" placeholder="Enter mobile number" required>
+                    <label>Mobile Number</label>
+                    <input type="tel" id="login-mobile" placeholder="+91 98765 43210" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" placeholder="Enter secret password" required>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-full">Login</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login to Dashboard</button>
             </form>
             
-            <div style="margin-top: 1.5rem; text-align: center;">
-                <p>New to FarmConnect? <a href="register.html" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">Sign up your farm</a></p>
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle);">
+                <p style="font-size: 0.95rem;">New to FarmConnect? <a href="register.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Register Your Farm</a></p>
             </div>
-
+            <a href="../index.html" style="display: block; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); text-decoration: none; font-weight: 600;">← Back to Role Select</a>
         </div>
     </div>
     <!-- Firebase Logic -->

@@ -73,6 +73,20 @@ function updateUI(p) {
     document.querySelector('.product-title').innerText = p.name;
     document.querySelector('.product-category').innerText = `${p.category || 'Fresh Harvest'} • Fresh Harvest`;
     
+    // Dynamic Description Generator
+    const descMap = {
+        mango: "Sweet and succulent premium mangoes, hand-picked at peak ripeness for the perfect flavor profile.",
+        tomato: "Firm, vine-ripened organic tomatoes with a robust flavor, ideal for both retail and processing.",
+        potato: "High-grade farm potatoes, sorted for size and quality, perfect for long-term storage or immediate distribution.",
+        wheat: "Premium golden wheat grains, cleaned and tested for quality, ready for wholesale and export standards.",
+        rice: "Selected long-grain rice, aged naturally for superior texture and aroma, sourced from verified local farms.",
+        chilli: "Fresh, pungent peppers with deep color and high spiciness, ideal for traditional culinary uses or spice milling.",
+    };
+
+    const description = descMap[(p.name || '').toLowerCase()] || `Premium quality ${p.name || 'produce'} sourced directly from verified farms. Consistent supply and wholesale-grade packaging ensured for business partners.`;
+    const descEl = document.getElementById('product-description');
+    if (descEl) descEl.innerText = description;
+    
     const priceDisplay = document.getElementById('display-price-meta');
     if (priceDisplay) priceDisplay.innerText = `₹${p.price} / ${p.unit || 'kg'}`;
     
@@ -162,7 +176,7 @@ window.addToCartFromPage = async () => {
     if (!buyerId) return alert("Please log in as a Buyer first.");
     if (!currentProduct) return;
 
-    const btn = document.querySelector('.btn-buy');
+    const btn = document.querySelector('.btn-add-cart-main');
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
     btn.disabled = true;
 

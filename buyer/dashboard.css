@@ -14,57 +14,7 @@
     flex-direction: column;
 }
 
-/* Navbar (Consistent with Negotiations) */
-.navbar {
-    height: var(--navbar-height);
-    background: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1001;
-}
-
-.nav-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--buyer-primary);
-    text-decoration: none;
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-}
-
-.nav-links a {
-    text-decoration: none;
-    font-weight: 600;
-    color: var(--text-light);
-    transition: color 0.3s;
-}
-
-.nav-links a.active { color: var(--buyer-primary); }
-
-.nav-logout {
-    padding: 8px 20px;
-    background: #fed7d7;
-    color: #c53030;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-}
+/* Navigation Bar handled globally in assets/global.css */
 
 /* Marketplace Header */
 .marketplace-header {

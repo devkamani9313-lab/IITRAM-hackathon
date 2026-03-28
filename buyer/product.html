@@ -15,8 +15,7 @@
     <nav class="navbar">
         <div class="nav-container" style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 100%; padding: 0 2rem;">
             <a href="index.html" class="logo">
-                <i class="fa-solid fa-seedling"></i>
-                Farm<span>Connect</span>
+                🌾 <span>FarmConnect</span>
             </a>
 
             <div class="nav-actions" style="display: flex; align-items: center; gap: 30px;">
@@ -35,7 +34,7 @@
                         Login
                     </button>
                     
-                    <div id="profile-area" class="profile-dropdown" style="display: none; display: flex; align-items: center; gap: 8px;">
+                    <div id="profile-area" class="profile-area" style="display: none;">
                         <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Profile" style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid white;">
                         <button id="logout-btn" class="nav-logout">Logout</button>
                     </div>
@@ -69,8 +68,8 @@
             
             <div>
                 <span class="product-category">Vegetables • Fresh Harvest</span>
-                <h1 class="product-title">Premium Red Organic Tomatoes</h1>
-                <p style="color: var(--text-light); margin-top: 10px;">High-grade tomatoes, sun-ripened and hand-picked for the best shelf-life and taste. Perfect for retail or wholesale distributions.</p>
+                <h1 class="product-title">Premium Harvest</h1>
+                <p id="product-description" style="color: var(--text-muted); margin-top: 10px;"></p>
             </div>
 
             <div class="product-meta">
@@ -89,7 +88,7 @@
                     </div>
                 </div>
                 <div class="meta-item">
-                    <div class="meta-icon" style="color:var(--primary-color); background:#eff6ff;"><i class="fa-solid fa-tag"></i></div>
+                    <div class="meta-icon" style="color:var(--primary); background:var(--primary-light);"><i class="fa-solid fa-tag"></i></div>
                     <div class="meta-text">
                         <label>Your Price</label>
                         <span id="display-price-meta">₹45 / kg</span>
@@ -100,7 +99,7 @@
             <!-- Bulk Pricing Tiers -->
             <div class="pricing-tiers">
                 <h3 style="margin-bottom: 20px; font-weight: 800; font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
-                    <i class="fa-solid fa-tags" style="color: var(--primary-color);"></i> Bulk Pricing Savings
+                    <i class="fa-solid fa-tags" style="color: var(--primary);"></i> Bulk Pricing Savings
                 </h3>
                 <table class="pricing-table">
                     <thead>
@@ -132,10 +131,10 @@
 
             <!-- Action Buttons -->
             <div class="action-buttons">
-                <button class="btn btn-large btn-buy" onclick="addToCartFromPage()">
+                <button class="btn btn-large btn-primary btn-add-cart-main" onclick="addToCartFromPage()">
                     <i class="fa-solid fa-cart-plus"></i> Add to Cart
                 </button>
-                <button class="btn btn-large btn-negotiate" onclick="openNegotiationModal()">
+                <button class="btn btn-large btn-outline" onclick="openNegotiationModal()">
                     <i class="fa-solid fa-comments"></i> Negotiate Price
                 </button>
             </div>

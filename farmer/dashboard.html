@@ -9,7 +9,7 @@
 </head>
 <body class="dashboard-body">
 
-    <!-- Clean Premium Navigation -->
+    <!-- Premium Navigation -->
     <header class="dashboard-header-main">
         <div class="header-inner container">
             <div class="logo-area">
@@ -24,63 +24,83 @@
 
     <main class="dashboard-main-content">
         
-        <!-- Heading and Overview Section -->
+        <!-- Overview & Action Bar -->
         <section class="overview-section container">
             <div class="overview-header">
                 <div class="header-text">
-                    <h1>Dashboard</h1>
-                    <p>Track your inventory, manage sales, and connect with wholesale buyers.</p>
+                    <h1>Sellers Dashboard</h1>
+                    <p>High-level view of your farm's performance and active listings.</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary" id="openModalBtn" onclick="openFarmerModal()">+ Grow New Listing</button>
+                    <button class="btn btn-primary animate-fade" id="openModalBtn" onclick="openFarmerModal()">
+                        <i class="fa-solid fa-plus"></i> Grow New Listing
+                    </button>
                 </div>
             </div>
             
-            <div class="stats-stripe">
+            <div class="stats-stripe animate-fade">
                 <div class="stat-tile">
-                    <span class="tile-label">Live Listings</span>
+                    <span class="tile-label">Market Visibility</span>
                     <span class="tile-value" id="totalProducts">0</span>
+                    <p style="font-size: 0.8rem; margin-top: 5px;">Active Listings</p>
                 </div>
                 <div class="stat-tile">
-                    <span class="tile-label">Orders Received</span>
+                    <span class="tile-label">Total Volume</span>
                     <span class="tile-value" id="activeOrders">0</span>
+                    <p style="font-size: 0.8rem; margin-top: 5px;">Successful Sales</p>
+                </div>
+                <div class="stat-tile" style="background: var(--primary); color: white;">
+                    <span class="tile-label" style="color: rgba(255,255,255,0.8);">Health Score</span>
+                    <span class="tile-value" style="color: white;">98%</span>
+                    <p style="font-size: 0.8rem; margin-top: 5px; color: rgba(255,255,255,0.8);">Excellent Service</p>
                 </div>
             </div>
         </section>
 
-        <!-- Section: Pending Negotiations (Offers from Buyers) -->
-        <section class="negotiation-section container" style="margin-bottom: 4rem;">
-            <div class="shelf-header">
-                <h2 style="display: flex; align-items: center; gap: 10px;">Pending Negotiations 🔔</h2>
-                <p style="color: var(--text-light); font-size: 0.95rem;">Review and respond to price offers from interested buyers.</p>
+        <!-- Pending Negotiations -->
+        <section class="negotiation-section container" style="margin-bottom: 5rem;">
+            <div style="margin-bottom: 2rem;">
+                <h2 style="display: flex; align-items: center; gap: 12px; font-size: 1.8rem;">
+                    Internal Negotiations 🔔
+                </h2>
+                <p style="color: var(--text-muted); font-size: 1rem;">Direct price offers from wholesale partners awaiting your approval.</p>
             </div>
-            <div id="negotiationList">
-                <div class="empty-order-card" style="padding: 3rem; text-align: center; background: white; border-radius: 20px; border: 1px dashed var(--border-soft);">
-                    <p style="color: var(--text-light);">No pending offers at the moment.</p>
+            
+            <div id="negotiationList" class="activity-log-card animate-fade">
+                <div style="padding: 4rem; text-align: center;">
+                    <p style="color: var(--text-muted);">No active negotiations.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Storefront Management -->
+        <!-- Storefront Grid -->
         <section class="storefront-section container">
-            <h2 class="section-title">Your Live Storefront</h2>
+            <div style="margin-bottom: 2.5rem;">
+                <h2 class="section-title">Your Live Storefront</h2>
+                <p style="color: var(--text-muted);">These products are currently visible to buyers across the platform.</p>
+            </div>
+
             <div class="product-grid" id="produceGrid">
                 <!-- Illustrated Empty state -->
                 <div class="empty-state-card" id="emptyState">
-                    <div class="empty-icon-wrap">🌿</div>
-                    <h3>Your shop is empty</h3>
-                    <p>Start listing your fresh harvest to attract wholesale buyers today.</p>
+                    <div class="empty-icon-wrap">🌱</div>
+                    <h3>Start Your Journey</h3>
+                    <p>You haven't listed any produce yet. Click the button above to post your first harvest to the marketplace.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Section: Sales History (Completed Purchases) -->
-        <section class="activity-section container">
-            <h2 class="section-title">Sales History & Buyers</h2>
-            <div class="activity-log-card">
+        <!-- Sales Analytics / History -->
+        <section class="activity-section container" style="margin-top: 5rem;">
+            <div style="margin-bottom: 2rem;">
+                <h2 class="section-title">Order Lifecycle & History</h2>
+                <p style="color: var(--text-muted);">Comprehensive log of all completed transactions and buyer details.</p>
+            </div>
+            
+            <div class="activity-log-card animate-fade">
                 <div class="order-list" id="salesHistoryList">
                     <div class="order-empty-message">
-                        <p>No sales history yet. Your completed orders will appear here.</p>
+                        <p>Waiting for your first premium order...</p>
                     </div>
                 </div>
             </div>
@@ -92,22 +112,22 @@
     <div class="modal-dimmer" id="modalOverlay">
         <div class="modal-window">
             <div class="modal-top">
-                <h2>List Fresh Produce</h2>
-                <button class="close-modal-btn" id="closeModalBtn" onclick="document.getElementById('modalOverlay').classList.remove('active')">&times;</button>
+                <h2>Product Details</h2>
+                <button class="close-modal-btn" onclick="document.getElementById('modalOverlay').classList.remove('active')">&times;</button>
             </div>
 
             <form id="addProduceForm" class="modal-form">
-                <div class="input-block">
-                    <label>Item Name</label>
-                    <input type="text" id="prodName" placeholder="e.g. Red Tomatoes" required>
+                <div class="form-group">
+                    <label>Harvest Item Name</label>
+                    <input type="text" id="prodName" placeholder="e.g. Alphonso Mangoes" required>
                 </div>
 
-                <div class="input-grid">
-                    <div class="input-block">
-                        <label>Stock Quantity</label>
-                        <input type="number" id="prodQty" placeholder="100" required>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Availability Volume</label>
+                        <input type="number" id="prodQty" placeholder="1000" required>
                     </div>
-                    <div class="input-block">
+                    <div class="form-group">
                         <label>Unit</label>
                         <select id="prodUnit">
                             <option value="kg">kg</option>
@@ -118,26 +138,25 @@
                     </div>
                 </div>
 
-                <div class="input-block">
-                    <label>Asking Price (per unit)</label>
+                <div class="form-group">
+                    <label>Standard Wholesale Price (per unit)</label>
                     <div class="price-input-bar">
                         <span>₹</span>
-                        <input type="number" id="prodPrice" placeholder="50" required>
+                        <input type="number" id="prodPrice" placeholder="45.00" required>
                     </div>
                 </div>
 
-                <div class="input-block">
-                    <label>Product Category 🏷️</label>
+                <div class="form-group">
+                    <label>Market Category 🏷️</label>
                     <select id="prodCategory" required>
-                        <option value="" disabled selected>Select Category</option>
-                        <option value="vegetables">Vegetables 🥦</option>
-                        <option value="fruits">Fruits 🍎</option>
+                        <option value="vegetables">Fresh Vegetables 🥦</option>
+                        <option value="fruits">Fresh Fruits 🍎</option>
                         <option value="grains">Grains & Cereals 🌾</option>
                     </select>
                 </div>
 
-                <div class="form-footer">
-                    <button type="submit" class="btn btn-primary btn-full">Post to Marketplace 🚀</button>
+                <div style="margin-top: 2.5rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Publish to Marketplace 🚀</button>
                 </div>
             </form>
         </div>
@@ -147,35 +166,33 @@
     <div class="modal-dimmer" id="editModalOverlay">
         <div class="modal-window">
             <div class="modal-top">
-                <h2>Edit Crop Details</h2>
+                <h2>Update Listing</h2>
                 <button class="close-modal-btn" onclick="document.getElementById('editModalOverlay').classList.remove('active')">&times;</button>
             </div>
 
             <form id="editProduceForm" class="modal-form">
                 <input type="hidden" id="editProdId">
-                <p style="color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem;">Updating details for: <strong style="color: var(--text-dark);" id="editProdNameDisplay">Crop Name</strong></p>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Product ID Reference: <strong id="editProdNameDisplay">...</strong></p>
 
-                <div class="input-grid">
-                    <div class="input-block">
-                        <label>Stock Quantity</label>
-                        <input type="number" id="editProdQty" placeholder="100" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Adjust Quantity</label>
+                        <input type="number" id="editProdQty" required>
                     </div>
-                    <div class="input-block">
-                        <label>Asking Price (per unit)</label>
-                        <div class="price-input-bar">
-                            <span>₹</span>
-                            <input type="number" id="editProdPrice" placeholder="50" required>
-                        </div>
+                    <div class="form-group">
+                        <label>Update Price (₹)</label>
+                        <input type="number" id="editProdPrice" required>
                     </div>
                 </div>
 
-                <div class="form-footer">
-                    <button type="submit" class="btn btn-primary btn-full">Confirm</button>
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="dashboard.js"></script>
 </body>
 </html>

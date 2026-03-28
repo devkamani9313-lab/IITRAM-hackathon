@@ -9,39 +9,41 @@
 <body>
     <a href="index.html" style="position:absolute; top:20px; left:20px; text-decoration:none; color:var(--dark-green); font-weight:bold;">← Back to Login</a>
     
-    <div class="auth-container" style="background: var(--light-green);">
-        <div class="auth-card" style="max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.04); background: white; border: none;">
-            <h2 style="color: var(--dark-green); margin-bottom: 0.5rem;">🌾 Register Your Farm</h2>
-            <p style="color: var(--text-light); margin-bottom: 2rem;">Join the network to sell your harvest directly.</p>
+    <div class="auth-container">
+        <div class="auth-card card-premium animate-fade">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🌾</div>
+            <h1 style="margin-bottom: 0.5rem;">Join the Network</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Create your farmer account and start selling your harvest directly to wholesale buyers.</p>
             
-            <form action="dashboard.html">
+            <form id="farmer-register-form">
                 <div class="form-group">
                     <label>Farm Name (or Your Name)</label>
-                    <input type="text" placeholder="e.g. Green Valley Farm" required>
+                    <input type="text" id="reg-farmName" placeholder="e.g. Green Valley Farm" required>
                 </div>
                 
-                <div class="form-group">
-                    <label>Mobile Number</label>
-                    <input type="tel" placeholder="Enter your mobile number" required>
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label>Mobile Number</label>
+                        <input type="tel" id="reg-mobile" placeholder="+91 98765..." required>
+                    </div>
+                    <div>
+                        <label>City / Location</label>
+                        <input type="text" id="reg-location" placeholder="e.g. Pune" required>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label>City / Location</label>
-                    <input type="text" placeholder="e.g. Pune, Maharashtra" required>
+                    <label>Create Secure Password</label>
+                    <input type="password" id="reg-password" placeholder="••••••••" required>
                 </div>
 
-                <div class="form-group">
-                    <label>Create Password</label>
-                    <input type="password" placeholder="Create a secure password" required>
-                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Register My Farm 🚀</button>
 
-                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
-
-                <div style="margin-top: 1.5rem; text-align: center;">
-                    <p>Already registered? <a href="index.html" style="color: var(--primary-green); font-weight: 600; text-decoration: none;">Log in here</a></p>
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle);">
+                    <p style="font-size: 0.95rem;">Already have an account? <a href="index.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Log in here</a></p>
                 </div>
+                <a href="../index.html" style="display: block; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); text-decoration: none; font-weight: 600;">← Back to Role Select</a>
             </form>
-
         </div>
     </div>
 

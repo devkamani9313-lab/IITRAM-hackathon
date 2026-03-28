@@ -4,29 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FarmConnect - My Orders</title>
+    <!-- Premium Assets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/global.css">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="orders.css">
 </head>
 <body class="dashboard-body">
 
-    <!-- Navbar -->
+    <!-- Premium Navbar -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">🏬 Buyer Console</a>
-            <div class="nav-links">
-                <a href="index.html">Marketplace</a>
-                <a href="orders.html" class="active">My Orders</a>
+        <div class="nav-container container">
+            <a href="index.html" class="logo">
+                🌾 <span>FarmConnect</span>
+            </a>
+
+            <div class="search-container animate-fade">
+                <input type="text" id="product-search" placeholder="Search your order history...">
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+
+            <div class="nav-actions">
+                <div class="nav-links">
+                    <a href="index.html">Marketplace</a>
+                    <a href="orders.html" class="active">My Orders</a>
+                </div>
                 
-                <div id="auth-container" class="auth-section" style="margin-left: 15px;">
-                    <button id="login-nav-btn" class="btn" style="padding: 6px 15px; border-radius: 6px; font-weight: 600; background: var(--primary-color); color: white; border: none; cursor: pointer; display: none;" onclick="window.location.href='login.html'">
-                        Login
-                    </button>
-                    
-                    <div id="profile-area" class="profile-dropdown" style="display: none; align-items: center; gap: 8px;">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Profile" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid white;">
-                        <button id="logout-btn" class="nav-logout">Logout</button>
+                <div id="profile-area" class="profile-area" style="display: none;">
+                    <div class="cart-icon" onclick="window.location.href='checkout.html'">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge">0</span>
                     </div>
+                    <button class="nav-logout" id="logout-btn">Logout</button>
                 </div>
             </div>
         </div>
@@ -55,51 +64,25 @@
             </div>
         </section>
 
-        <!-- Orders Table -->
-        <section class="orders-table-wrapper">
-            <table class="orders-table">
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Product</th>
-                        <th>Farmer</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="orders-list">
-                    <!-- Sample Data -->
-                    <tr class="order-row" onclick="viewOrder('ORD-1042')">
-                        <td>#ORD-1042</td>
-                        <td>Organic Tomatoes</td>
-                        <td>Farmer Ramesh</td>
-                        <td>₹2,500</td>
-                        <td><span class="status-badge approved">Delivered</span></td>
-                        <td>Mar 25, 2026</td>
-                        <td><button class="btn-text">View Details</button></td>
-                    </tr>
-                    <tr class="order-row" onclick="viewOrder('ORD-1038')">
-                        <td>#ORD-1038</td>
-                        <td>Basmati Rice</td>
-                        <td>Sunil K.</td>
-                        <td>₹12,400</td>
-                        <td><span class="status-badge pending">In Transit</span></td>
-                        <td>Mar 20, 2026</td>
-                        <td><button class="btn-text">View Details</button></td>
-                    </tr>
-                    <tr class="order-row" onclick="viewOrder('ORD-1031')">
-                        <td>#ORD-1031</td>
-                        <td>Fresh Oranges</td>
-                        <td>Nitin Dev</td>
-                        <td>₹3,600</td>
-                        <td><span class="status-badge approved">Delivered</span></td>
-                        <td>Mar 15, 2026</td>
-                        <td><button class="btn-text">View Details</button></td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- Orders List (Dashboard Style) -->
+        <section class="orders-list-wrapper">
+            <header class="list-header">
+                <div>Order ID</div>
+                <div>Product Details</div>
+                <div>Farmer</div>
+                <div>Amount</div>
+                <div>Status</div>
+                <div>Date</div>
+                <div>Action</div>
+            </header>
+
+            <div id="orders-list" class="orders-list">
+                <!-- Dynamic Injection -->
+                <div style="text-align: center; padding: 50px; color: var(--text-muted);">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 15px;">Synchronizing your order history...</p>
+                </div>
+            </div>
         </section>
     </main>
 

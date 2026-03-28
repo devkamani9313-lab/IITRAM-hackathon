@@ -3,101 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace | FarmConnect Buyer</title>
-    <!-- Font Awesome for Icons -->
+    <title>Marketplace | FarmConnect</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Global Styles -->
     <link rel="stylesheet" href="../assets/global.css">
-    <!-- Specific Buyer Styles -->
-    <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="index.css">
 </head>
-<body class="dashboard-body">
+<body>
 
-    <!-- Navigation Bar -->
+    <!-- Premium Navbar -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="../index.html" class="logo">
-                <i class="fa-solid fa-seedling"></i>
-                Farm<span>Connect</span>
+        <div class="nav-container container">
+            <a href="index.html" class="logo">
+                🌾 <span>FarmConnect</span>
             </a>
 
-            <div class="search-container">
+            <div class="search-container animate-fade">
                 <input type="text" id="product-search" placeholder="Search for fresh crops, farmers, or locations...">
-                <button class="search-btn">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
-
-            <select id="category-filter" class="nav-category-select">
-                <option value="all">All Categories</option>
-                <option value="vegetables">Vegetables</option>
-                <option value="fruits">Fruits</option>
-                <option value="grains">Grains</option>
-            </select>
 
             <div class="nav-actions">
                 <div class="nav-links">
                     <a href="index.html" class="active">Marketplace</a>
                     <a href="orders.html">My Orders</a>
                 </div>
-
-                <div class="cart-icon" onclick="window.location.href='checkout.html'">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    <span class="cart-badge">3</span>
+                
+                <div id="profile-area" class="profile-area" style="display: none;">
+                    <div class="cart-icon" onclick="window.location.href='checkout.html'">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge">0</span>
+                    </div>
+                    <button class="nav-logout" id="logout-btn">Logout</button>
                 </div>
                 
-                <div id="auth-container" class="auth-section">
-                    <!-- Login Button (Hidden if logged in) -->
-                    <button id="login-nav-btn" class="btn" style="padding: 8px 20px; border-radius: 8px; font-weight: 600; background: var(--primary-color); color: white; border: none; cursor: pointer; display: none;" onclick="window.location.href='login.html'">
-                        Login / Sign Up
-                    </button>
-                    
-                    <!-- Profile Area (Hidden if logged out) -->
-                    <div id="profile-area" class="profile-dropdown" style="display: none;">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Profile" class="profile-img">
-                        <button id="logout-btn" class="nav-logout">Logout</button>
-                    </div>
-                </div>
+                <a href="login.html" id="login-nav-btn" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85rem;">Login</a>
             </div>
         </div>
     </nav>
 
-    <div class="main-container">
-        <!-- Main Content -->
-        <main class="content" style="max-width: 1400px; margin: 0 auto; width: 100%;">
-            <!-- Enhanced Hero Section -->
-            <header class="marketplace-header" style="text-align: center; padding: 4rem 2rem; margin-bottom: 3rem; background: linear-gradient(135deg, #eafaf1 0%, #d1f2eb 100%); border-radius: 32px; box-shadow: inset 0 2px 10px rgba(255,255,255,0.5);">
-                <div class="header-content" style="max-width: 700px; margin: 0 auto;">
-                    <span style="display: block; font-size: 3rem; margin-bottom: 1rem;">🌾</span>
-                    <h1 style="font-size: 3rem; font-weight: 900; color: #1a202c; letter-spacing: -1px; margin-bottom: 1rem;">
-                        Fresh From The Farm
-                    </h1>
-                    <p style="color: #4a5568; font-size: 1.25rem; line-height: 1.6; font-weight: 500;">
-                        Discover premium, hand-picked produce from verified local farmers. Direct wholesale sourcing tailored to fuel your business.
-                    </p>
-                </div>
-            </header>
+    <main class="main-content container">
+        
+        <!-- Marketplace Hero / Banner -->
+        <header class="marketplace-hero animate-fade" style="background: linear-gradient(135deg, var(--primary-light), #ecfdf5); padding: 3rem; border-radius: var(--radius-xl); margin-bottom: 3rem; text-align: center; border: 1px solid var(--primary-light);">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🥬</div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Fresh From The Farm</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Discover premium, hand-picked produce from verified local farmers. Direct wholesale sourcing tailored to fuel your business.</p>
+        </header>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
-                <h2 style="font-size: 1.5rem; font-weight: 700;">Available Produce</h2>
-                <div id="results-count" style="font-size: 0.9rem; color: var(--text-light);">
-                    Fetching live updates...
+        <!-- Marketplace Body (Sidebar + Content) -->
+        <div class="marketplace-layout animate-fade" style="animation-delay: 0.1s;">
+            
+            <!-- Filters Sidebar -->
+            <aside class="filter-sidebar">
+                <div class="filter-group">
+                    <h3 class="filter-title">Harvest Category</h3>
+                    <div class="filter-options">
+                        <label class="filter-checkbox">
+                            <input type="checkbox" class="category-checkbox" value="vegetables" checked>
+                            <span>Vegetables 🥦</span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" class="category-checkbox" value="fruits" checked>
+                            <span>Fruits 🍎</span>
+                        </label>
+                        <label class="filter-checkbox">
+                            <input type="checkbox" class="category-checkbox" value="grains" checked>
+                            <span>Grains & Cereals 🌾</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3 class="filter-title">Budget Range (per kg)</h3>
+                    <div class="price-slider-container">
+                        <input type="range" id="price-range" min="0" max="10000" step="100" value="10000">
+                        <div class="price-labels">
+                            <span>₹0</span>
+                            <span id="price-max-label">₹10,000+</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3 class="filter-title">Seller Reliability</h3>
+                    <div class="filter-options">
+                        <label class="filter-radio">
+                            <input type="radio" name="reliability" value="4.5" id="rel-4-5">
+                            <span>Top Rated (4.5+ ⭐)</span>
+                        </label>
+                        <label class="filter-radio">
+                            <input type="radio" name="reliability" value="4.0" id="rel-4-0">
+                            <span>Highly Reliable (4.0+ ⭐)</span>
+                        </label>
+                        <label class="filter-radio">
+                            <input type="radio" name="reliability" value="0" checked id="rel-all">
+                            <span>All Sellers</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline" id="clear-filters" style="width: 100%; margin-top: 2rem;">Clear All Filters</button>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="marketplace-main">
+                <div class="results-header">
+                    <h2 id="results-count" style="font-size: 1.5rem;">Showing <strong>...</strong> live results</h2>
+                </div>
+
+                <div id="product-grid" class="products-grid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 100px;">
+                        <p>Loading the freshest harvest...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- This grid will be populated by app.js -->
-            <div id="product-grid" class="products-grid">
-                <!-- Loading State -->
-                <div class="loading-spinner" style="grid-column: 1/-1; text-align: center; padding: 50px;">
-                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
-                    <p style="margin-top: 15px; color: var(--text-light);">Loading fresh products...</p>
-                </div>
-            </div>
-        </main>
-    </div>
+        </div>
 
-    <!-- Firebase & App Logic -->
+    </main>
+
     <script type="module" src="app.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>

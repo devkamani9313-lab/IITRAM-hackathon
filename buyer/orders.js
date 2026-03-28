@@ -11,6 +11,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const buyerId = localStorage.getItem('buyerId');
+let allOrders = []; // Store orders for local filtering
 
 // -- 1. Authentication Guard --
 if (buyerId) {
@@ -24,6 +25,7 @@ function initOrders() {
     // If we're on the list page
     if (document.getElementById('orders-list')) {
         loadOrdersList();
+        setupSearch();
     }
     
     // If we're on the details page
@@ -32,6 +34,21 @@ function initOrders() {
     if (orderId) {
         loadOrderDetails(orderId);
     }
+}
+
+function setupSearch() {
+    const searchInput = document.getElementById("product-search");
+    if (!searchInput) return;
+    
+    searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = allOrders.filter(o => 
+            (o.productName || "").toLowerCase().includes(term) ||
+            (o.farmerName || "").toLowerCase().includes(term) ||
+            (o.id || "").toLowerCase().includes(term)
+        );
+        renderOrders(filtered);
+    });
 }
 
 // -- 2. Load Orders Table --
@@ -44,34 +61,45 @@ function loadOrdersList() {
     );
 
     onSnapshot(q, (snapshot) => {
-        const list = document.getElementById("orders-list");
-        list.innerHTML = "";
-        
-        let stats = { total: 0, delivered: 0, pending: 0 };
+        allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderOrders(allOrders);
+    });
+}
 
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const id = docSnap.id;
-            stats.total++;
-            
-            if (data.status === 'delivered') stats.delivered++;
-            else stats.pending++;
+function renderOrders(orders) {
+    const list = document.getElementById("orders-list");
+    if (!list) return;
+    
+    list.innerHTML = "";
+    let stats = { total: 0, delivered: 0, pending: 0 };
+    
+    orders.forEach((data) => {
+        const id = data.id;
+        stats.total++;
+        if (data.status === 'delivered') stats.delivered++;
+        else stats.pending++;
 
-            const row = document.createElement("tr");
-            row.className = "order-row";
+            const row = document.createElement("div");
+            row.className = "order-row animate-fade";
             row.onclick = () => window.location.href = `order-details.html?id=${id}`;
             
             const statusClass = (data.status === 'delivered' || data.status === 'approved') ? 'approved' : 'pending';
             const statusText = data.status === 'delivered' ? 'Delivered' : 'Pending';
+            const displayId = id.substring(0, 8).toUpperCase();
+            const displayDate = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Today';
 
             row.innerHTML = `
-                <td>#${id.substring(0, 8).toUpperCase()}</td>
-                <td>${data.productName || 'Produce'}</td>
-                <td>${data.farmerName || 'Farmer'}</td>
-                <td>₹${data.totalAmount || '0'}</td>
-                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                <td>${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleDateString() : 'Today'}</td>
-                <td><button class="btn-text">View Details</button></td>
+                <div class="order-id">#${displayId}</div>
+                <div class="product-name">${data.productName || 'Produce'}</div>
+                <div class="farmer-name">${data.farmerName || 'Farmer'}</div>
+                <div class="amount">₹${data.totalAmount || '0'}</div>
+                <div class="status-cell">
+                    <span class="status-badge ${statusClass}">${statusText}</span>
+                </div>
+                <div class="order-date">${displayDate}</div>
+                <div class="action-cell">
+                    <button class="btn-text">View Details</button>
+                </div>
             `;
             list.appendChild(row);
         });
@@ -80,7 +108,6 @@ function loadOrdersList() {
         document.getElementById("stat-total").innerText = stats.total;
         document.getElementById("stat-delivered").innerText = stats.delivered;
         document.getElementById("stat-pending").innerText = stats.pending;
-    });
 }
 
 // -- 3. Load Specific Order Details --

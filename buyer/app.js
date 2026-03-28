@@ -85,15 +85,35 @@ function listenToProducts() {
 
 function applyCurrentFilters() {
     const searchInput = document.getElementById("product-search");
-    const categoryFilter = document.getElementById("category-filter");
+    const priceRange = document.getElementById("price-range");
+    const priceMaxLabel = document.getElementById("price-max-label");
+    const categoryCheckboxes = document.querySelectorAll(".category-checkbox:checked");
+    const reliabilityFilter = document.querySelector('input[name="reliability"]:checked');
     
     const searchTerm = (searchInput?.value || "").toLowerCase();
-    const categoryTerm = categoryFilter?.value || "all";
+    const activeCategories = Array.from(categoryCheckboxes).map(cb => cb.value);
+    const maxPrice = Number(priceRange?.value || 10000);
+    const minReliability = Number(reliabilityFilter?.value || 0);
+
+    // Update Price Label UI
+    if (priceMaxLabel) {
+        priceMaxLabel.innerText = maxPrice >= 10000 ? "₹10,000+" : `₹${maxPrice.toLocaleString()}`;
+    }
 
     const filtered = allProducts.filter(p => {
         const matchesSearch = p.name?.toLowerCase().includes(searchTerm) || false;
-        const matchesCategory = categoryTerm === "all" || p.category?.toLowerCase() === categoryTerm;
-        return matchesSearch && matchesCategory;
+        
+        // Category Filter (Multi-select)
+        const matchesCategory = activeCategories.length === 0 || activeCategories.includes(p.category?.toLowerCase());
+        
+        // Price Filter
+        const matchesPrice = Number(p.price) <= maxPrice;
+
+        // Reliability Filter (Mocked if missing)
+        const traderScore = p.farmerRating || 4.2; // Default mock score
+        const matchesReliability = traderScore >= minReliability;
+
+        return matchesSearch && matchesCategory && matchesPrice && matchesReliability;
     });
     
     renderProducts(filtered);
@@ -157,18 +177,18 @@ function renderProducts(products) {
                      onerror="this.src='${noImagePlaceholder}'">
                 ${p.isOrganic ? '<span class="badge">Organic</span>' : ''}
             </div>
-            <div class="product-info" style="padding: 1.5rem;">
-                <h3 class="product-name" style="font-weight: 800; font-size: 1.25rem;">${safeName}</h3>
-                <div class="farmer-info" style="padding: 0.5rem 0; color: #718096; font-size: 0.9rem;">
+            <div class="product-info">
+                <h3 class="product-name">${safeName}</h3>
+                <div class="farmer-info">
                     📍 ${safeLocation} • 🧑‍🌾 ${safeFarmer}
                 </div>
-                <div class="price-tag" style="margin-top: 0.5rem; font-weight: 900; color: #2fb362; font-size: 1.4rem;">₹${safePrice} <span style="font-size: 0.9rem; color: #a0aec0;">/ ${safeUnit}</span></div>
+                <div class="price-tag">₹${safePrice} <span>/ ${safeUnit}</span></div>
                 
-                <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
-                    <button class="add-to-cart btn-negotiate" style="flex: 1; background: #eafaf1; color: #2fb362; border: none; padding: 0.8rem; border-radius: 12px; font-weight: 700; cursor: pointer;">
+                <div class="card-actions">
+                    <button class="btn-card btn-negotiate btn-negotiate-action">
                         🤝 Negotiate
                     </button>
-                    <button class="add-to-cart btn-add" style="flex: 1; background: var(--primary-color); color: white; border: none; padding: 0.8rem; border-radius: 12px; font-weight: 700; cursor: pointer;">
+                    <button class="btn-card btn-add btn-add-action">
                         🛒 Add
                     </button>
                 </div>
@@ -178,13 +198,13 @@ function renderProducts(products) {
         // Safe DOM Event Attachments
         card.addEventListener('click', () => { window.location.href = `product.html?id=${p.id}`; });
 
-        const btnNegotiate = card.querySelector('.btn-negotiate');
+        const btnNegotiate = card.querySelector('.btn-negotiate-action');
         btnNegotiate.addEventListener('click', (e) => {
             e.stopPropagation();
             window.startNegotiation(p.id, p.farmerId, safeName);
         });
 
-        const btnAdd = card.querySelector('.btn-add');
+        const btnAdd = card.querySelector('.btn-add-action');
         btnAdd.addEventListener('click', (e) => {
             e.stopPropagation();
             window.addToCart(p.id, safeName, p.farmerId, safeFarmer, safePrice, rawImg, safeUnit);
@@ -197,10 +217,32 @@ function renderProducts(products) {
 // -- 3. Search & Filter Logic --
 function setupFilters() {
     const searchInput = document.getElementById("product-search");
-    const categoryFilter = document.getElementById("category-filter");
+    const priceRange = document.getElementById("price-range");
+    const categoryCheckboxes = document.querySelectorAll(".category-checkbox");
+    const reliabilityRadios = document.querySelectorAll('input[name="reliability"]');
+    const clearBtn = document.getElementById("clear-filters");
 
     if (searchInput) searchInput.addEventListener("input", applyCurrentFilters);
-    if (categoryFilter) categoryFilter.addEventListener("change", applyCurrentFilters);
+    if (priceRange) priceRange.addEventListener("input", applyCurrentFilters);
+    
+    categoryCheckboxes.forEach(cb => {
+        cb.addEventListener("change", applyCurrentFilters);
+    });
+
+    reliabilityRadios.forEach(radio => {
+        radio.addEventListener("change", applyCurrentFilters);
+    });
+
+    if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+            if (searchInput) searchInput.value = "";
+            if (priceRange) priceRange.value = 10000;
+            categoryCheckboxes.forEach(cb => cb.checked = true);
+            const allRel = document.getElementById("rel-all");
+            if (allRel) allRel.checked = true;
+            applyCurrentFilters();
+        });
+    }
 }
 
 // -- 4. Cart Features --

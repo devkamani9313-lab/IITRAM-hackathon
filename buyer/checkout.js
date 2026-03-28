@@ -12,6 +12,27 @@ import {
     deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+window.openPaymentModal = () => {
+    if (realCartItems.length === 0) return alert("Your cart is empty!");
+    document.getElementById('modal-pay-amount').textContent = cartTotalAmount.toFixed(2);
+    document.getElementById('paymentModalOverlay').style.display = 'flex';
+};
+
+window.closePaymentModal = () => {
+    document.getElementById('paymentModalOverlay').style.display = 'none';
+};
+
+window.selectLogistics = (mode, fee) => {
+    deliveryFee = fee;
+    const cards = document.querySelectorAll('.option-card');
+    cards.forEach(c => c.classList.remove('active'));
+    
+    if (mode === 'delivery') cards[0].classList.add('active');
+    else cards[1].classList.add('active');
+
+    calculateTotals();
+};
+
 const buyerId = localStorage.getItem('buyerId');
 const buyerName = localStorage.getItem('buyerName');
 let realCartItems = [];
@@ -55,13 +76,14 @@ window.setDeliveryMode = (mode) => {
 let currentCartSubtotal = 0;
 
 window.calculateTotals = () => {
-    const gstRate = 0.05;
-    const tax = currentCartSubtotal * gstRate;
+    const serviceFeeRate = 0.01;
+    const tax = currentCartSubtotal * serviceFeeRate;
     cartTotalAmount = currentCartSubtotal + deliveryFee + tax;
 
-    document.getElementById('cart-subtotal').textContent = `₹${currentCartSubtotal.toFixed(2)}`;
-    document.getElementById('cart-tax').textContent = `₹${tax.toFixed(2)}`;
-    document.getElementById('cart-total').textContent = `₹${cartTotalAmount.toFixed(2)}`;
+    document.getElementById('summary-subtotal').textContent = `₹${currentCartSubtotal.toFixed(2)}`;
+    document.getElementById('summary-delivery').textContent = `₹${deliveryFee.toFixed(2)}`;
+    document.getElementById('summary-tax').textContent = `₹${tax.toFixed(2)}`;
+    document.getElementById('summary-total').textContent = `₹${cartTotalAmount.toFixed(2)}`;
 };
 
 function listenToBuyerCart() {
@@ -88,14 +110,14 @@ function listenToBuyerCart() {
 }
 
 function renderCheckoutCart() {
-    const cartContainer = document.getElementById('real-cart-items');
+    const cartContainer = document.getElementById('cart-items-container');
     
     if (realCartItems.length === 0) {
         cartContainer.innerHTML = `
-            <div style="text-align: center; padding: 3rem; color: var(--text-light);">
-                <i class="fa-solid fa-cart-arrow-down" style="font-size: 3rem; margin-bottom: 1rem; color: #e2e8f0;"></i>
-                <p>Your cart is empty.</p>
-                <button class="btn" style="margin-top: 15px; background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;" onclick="window.location.href='index.html'">Go to Marketplace</button>
+            <div style="text-align: center; padding: 4rem 2rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.2;">🛒</div>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Your cart is empty.</p>
+                <a href="index.html" class="btn btn-outline">Browse Marketplace</a>
             </div>`;
         currentCartSubtotal = 0;
         calculateTotals();
@@ -110,14 +132,14 @@ function renderCheckoutCart() {
                 <img src="${item.imageUrl}" class="cart-item-img" alt="${safeName}">
                 <div class="item-info">
                     <h4 class="item-name">${safeName}</h4>
-                    <p class="item-farmer">${item.farmerName} • ${item.unit}</p>
+                    <p class="item-farmer">🧑‍🌾 ${item.farmerName} • ${item.unit}</p>
                 </div>
                 <div class="quantity-controls">
-                    <button class="qty-btn" onclick="updateCartQty('${item.id}', ${item.qty - 1})">-</button>
-                    <span class="qty-val">${item.qty}</span>
+                    <button class="qty-btn" onclick="updateCartQty('${item.id}', ${item.qty - 1})">−</button>
+                    <span class="qty-val" style="font-weight: 800; min-width: 20px; text-align: center;">${item.qty}</span>
                     <button class="qty-btn" onclick="updateCartQty('${item.id}', ${item.qty + 1})">+</button>
                 </div>
-                <div class="item-price">₹${item.price * item.qty}</div>
+                <div class="item-price">₹${(item.price * item.qty).toFixed(2)}</div>
             </div>
         `;
     });

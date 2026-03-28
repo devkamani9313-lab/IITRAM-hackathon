@@ -163,10 +163,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="p-icon">🌿</div>
                 <h3 class="p-name">${item.name}</h3>
                 <p class="p-meta">${item.qty} ${item.unit} Available</p>
-                <div class="p-price">₹${item.price} / ${item.unit}</div>
+                <div class="p-price">₹${item.price} <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 500;">/ ${item.unit}</span></div>
                 <div class="p-actions">
-                    <button class="p-btn p-btn-edit" onclick="openEditModal('${id}', '${escName}', '${item.qty}', '${item.price}')">Edit</button>
-                    <button class="p-btn p-btn-del" onclick="deleteCrop('${id}', '${escName}')">Delete</button>
+                    <button class="p-btn" onclick="openEditModal('${id}', '${escName}', '${item.qty}', '${item.price}')">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </button>
+                    <button class="p-btn p-btn-del" onclick="deleteCrop('${id}', '${escName}')">
+                        <i class="fa-solid fa-trash"></i> Delete
+                    </button>
                 </div>
             `;
             produceGrid.appendChild(card);
@@ -236,12 +240,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             row.innerHTML = `
                 <div class="o-detail"><span class="o-label">Buyer</span><span class="o-value">${order.buyerName || 'Client'}</span></div>
                 <div class="o-detail"><span class="o-label">Date</span><span class="o-value">${dateStr}</span></div>
-                <div class="o-detail"><span class="o-label">Items</span><span class="o-value" style="font-weight:600;">${order.productName}</span></div>
-                <div class="o-detail"><span class="o-label">Amount</span><span class="o-value" style="color: #2fb362; font-weight: 800; font-size:1.1rem;">₹${order.totalAmount}</span></div>
+                <div class="o-detail"><span class="o-label">Items</span><span class="o-value" style="font-weight:800;">${order.productName}</span></div>
+                <div class="o-detail"><span class="o-label">Amount</span><span class="o-value" style="color: var(--primary); font-weight: 900; font-size:1.1rem;">₹${order.totalAmount}</span></div>
                 <div class="o-detail" style="text-align: right;">
                     ${order.paymentMethod === 'Cash on Delivery' 
-                        ? `<span style="background:#fff7ed; color:#c2410c; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; border: 1px solid #fdba74;">Unpaid (COD) 🚚</span>`
-                        : `<span style="background:#eafaf1; color:#2fb362; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; border: 1px solid #c8e6c9;">Paid ✅</span>`
+                        ? `<span style="background:#fff7ed; color:#c2410c; padding: 6px 14px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; border: 1px solid #fdba74;">COD 🚚</span>`
+                        : `<span style="background:#ecfdf5; color:#059669; padding: 6px 14px; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; border: 1px solid #6ee7b7;">PAID ✅</span>`
                     }
                 </div>
             `;
